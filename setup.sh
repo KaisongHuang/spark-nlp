@@ -25,6 +25,9 @@ conda install -c conda-forge spacy
 # Download spaCy English model
 python -m spacy download en
 
+# Download AllenNLP
+pip install allennlp
+
 ###
 # CUDA
 ###

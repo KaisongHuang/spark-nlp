@@ -2,15 +2,9 @@ import argparse
 import json
 import time
 
-import spacy
+import spacy_ner
 from pyspark import SparkContext
 from pyspark.mllib.common import _java2py
-
-
-def setup_spacy(gpu):
-    if gpu:
-        spacy.require_gpu()
-    return spacy.load("en", disable=['parser', 'tagger'])
 
 
 def get_docs(index):
@@ -31,45 +25,42 @@ def get_docs(index):
 
 
 # Get an array of paragraphs (str)
-def get_paragraphs(raw):
+def get_paragraphs(document):
     arr = []
-    parsed = json.loads(raw)
-    for content in parsed["contents"]:
-        type = content["type"]
-        if type == "sanitized_html":
-            subtype = content["subtype"]
-            if subtype == "paragraph":
-                arr.append(content['content'])
+    for content in document["contents"]:
+        if content["type"] == "sanitized_html" and content["subtype"] == "paragraph":
+            arr.append(content["content"])
     return arr
 
 
-# Return a dict of entities to their labels
-def extract_entites(text):
-    ents = {}
-    for ent in nlp(text).ents:
-        ents[ent.text] = (ent.label_, ent.start_char, ent.end_char)
-    return ents
+def run(doc):
+    paragraphs = get_paragraphs(json.loads(doc["raw"]))
+    return spacy_ner.ner(nlp, paragraphs)
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--gpu", default=False, type=bool, help="whether to use GPUs for inference")
+    parser.add_argument("--gpu", default=-1, type=int, help="the GPU number to use")
     parser.add_argument("--index", required=True, type=str, help="the index path")
+    parser.add_argument("--num", default=100, type=int, help="the number of documents use")
 
     # Parse the args
     args = parser.parse_args()
 
-    sc = SparkContext(master="local[*]")
+    sc = SparkContext(appName="spacy NER")
 
-    nlp = setup_spacy(args.gpu)
+    # Get the RDD of Lucene Documents
     docs = get_docs(args.index)
 
     start = time.time_ns()
 
-    for doc in docs.take(100):
-        for sent in get_paragraphs(doc["raw"]):
-            entites = extract_entites(sent)
-            if entites:
-                print(extract_entites(sent))
+    # Setup spacy
+    nlp = spacy_ner.setup(args.gpu)
+
+    # Do NER on some docs...
+    for doc in docs.take(args.num):
+        print("###\n# Document ID: %s\n###" % doc["id"])
+        for paragraph in run(doc):
+            print(paragraph)
 
     print("Took %d ms" % ((time.time_ns() - start) / 1000 / 1000))

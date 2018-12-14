@@ -1,6 +1,7 @@
 # Setup
 
 The following script will setup the Conda environment (and install the dependencies) + download Anserini-Spark, Spark, and any other required software:
+
 `./setup.sh`
 
 After setup is complete, we need to setup our bash session:
@@ -17,5 +18,6 @@ export PATH=/usr/local/cuda-9.2/bin/:$PATH
 export SPARK_LOCAL_IP="127.0.0.1"
 ```
 
-We're ready to run now:
-`python run.py --index <index_location> [--gpu]`
+We're ready to run now (after changing the parameters in the script for index location, GPU, etc.):
+
+`./run.sh`

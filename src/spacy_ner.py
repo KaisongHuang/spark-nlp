@@ -9,6 +9,7 @@ def setup(gpu):
     if gpu >= 0:
         # Set GPU env. variable
         os.environ["CUDA_VISIBLE_DEVICES"] = str(gpu)
+    
         # Tell spacy to use the GPU
         spacy.require_gpu()
 

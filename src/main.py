@@ -27,9 +27,11 @@ def get_docs(index):
 # Get an array of paragraphs (str)
 def get_paragraphs(document):
     arr = []
-    for content in document["contents"]:
-        if content["type"] == "sanitized_html" and content["subtype"] == "paragraph":
-            arr.append(content["content"])
+    if (document is not None) and ("contents" in document):
+        for content in document["contents"]:
+            if (content is not None) and ("content" in content) and ("type" in content) and ("subtype" in content):
+                if (content["type"] == "sanitized_html") and (content["subtype"] == "paragraph"):
+                    arr.append(content["content"])
     return arr
 
 
@@ -42,7 +44,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--gpu", default=-1, type=int, help="the GPU number to use")
     parser.add_argument("--index", required=True, type=str, help="the index path")
-    parser.add_argument("--num", default=100, type=int, help="the number of documents use")
+    parser.add_argument("--num", default=-1, type=int, help="the number of documents use")
 
     # Parse the args
     args = parser.parse_args()
@@ -57,13 +59,13 @@ if __name__ == "__main__":
     # Setup spacy
     nlp = spacy_ner.setup(args.gpu)
 
-    # docs.foreach(lambda doc: run(doc))
+    if args.num < 1:
+        docs.foreach(lambda doc: run(doc))
+    else:
+        for doc in docs.take(args.num):
+            print("###\n# Document ID: %s\n###" % doc["id"])
+            run(doc)
+            # for paragraph in run(doc):
+                # print(paragraph)
 
-    # Do NER on some docs...
-    for doc in docs.take(args.num):
-        print("###\n# Document ID: %s\n###" % doc["id"])
-        for paragraph in run(doc):
-           print(paragraph)
-
-    print("Took %d ms" % ((time.time_ns() - start) / 1000 / 1000))
-    
+    print("Took %d ms" % ((time.time_ns() - start) / 1000 / 1000))    

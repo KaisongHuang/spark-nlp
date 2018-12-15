@@ -13,8 +13,7 @@ def setup(gpu):
         spacy.require_gpu()
 
     # Load the English model
-    nlp = spacy.load("en", disable=["tagger", "parser"])
-    nlp.add_pipe(nlp.create_pipe('sentencizer'))
+    nlp = spacy.load("en")
 
     return nlp
 
@@ -26,15 +25,15 @@ def ner(nlp, doc):
     # For each parsed doc...
     for parsed_doc in nlp.pipe(doc):
 
-        # Keep track of the text and the entities in the text
-        par = {
-            "paragraph": parsed_doc.text,
-            "entities": []
-        }
+        # Keep track of sentences in the paragraph
+        par = []
 
         # For each sentence in the paragraph, fetch the entities
         for sentence in parsed_doc.sents:
-            par["entities"].append(get_entities(sentence))
+            par.append({
+                "text": sentence,
+                "entities": get_entities(sentence)
+            })
 
         # Add the paragraph to our results
         results.append(par)
@@ -44,4 +43,4 @@ def ner(nlp, doc):
 
 # Get the entities in a sentence
 def get_entities(sentence):
-    return [{ent.text: (ent.label_, ent.start_char, ent.end_char)} for ent in sentence.ents]
+    return [{ent.text: (ent.label_, ent.start_char - ent.sent.start_char, ent.end_char - ent.sent.start_char)} for ent in sentence.ents]

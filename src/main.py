@@ -57,10 +57,13 @@ if __name__ == "__main__":
     # Setup spacy
     nlp = spacy_ner.setup(args.gpu)
 
+    # docs.foreach(lambda doc: run(doc))
+
     # Do NER on some docs...
     for doc in docs.take(args.num):
         print("###\n# Document ID: %s\n###" % doc["id"])
         for paragraph in run(doc):
-            print(paragraph)
+           print(paragraph)
 
     print("Took %d ms" % ((time.time_ns() - start) / 1000 / 1000))
+    

@@ -9,7 +9,7 @@ def setup(gpu):
     if gpu >= 0:
         # Set GPU env. variable
         os.environ["CUDA_VISIBLE_DEVICES"] = str(gpu)
-    
+
         # Tell spacy to use the GPU
         spacy.require_gpu()
 
@@ -43,5 +43,5 @@ def ner(nlp, doc):
 
 
 # Get the entities in a sentence
-def get_entities(sentence):
-    return [{ent.text: (ent.label_, ent.start_char - ent.sent.start_char, ent.end_char - ent.sent.start_char)} for ent in sentence.ents]
+def get_entities(sent):
+    return [{e.text: (e.label_, e.start_char - e.sent.start_char, e.end_char - e.sent.start_char)} for e in sent.ents]

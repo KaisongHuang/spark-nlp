@@ -11,7 +11,7 @@ BASE=`pwd`
 ###
 
 # Source Anaconda
-. /home/ralph/anaconda3/etc/profile.d/conda.sh
+. /home/ryan1clancy/.miniconda/etc/profile.d/conda.sh
 
 # Create conda environment
 conda create --name $ENV_NAME python=3.7
@@ -29,17 +29,17 @@ python -m spacy download en
 pip install allennlp
 
 ###
-# CUDA
+# CUDA - Disabled for now
 ###
 
 # Create git directory
 mkdir git && cd git
 
 # Build thinc_gpu_ops from source because pip fails
-git clone https://github.com/explosion/thinc_gpu_ops.git && cd thinc_gpu_ops && pip install -r requirements.txt && python setup.py install
+#git clone https://github.com/explosion/thinc_gpu_ops.git && cd thinc_gpu_ops && pip install -r requirements.txt && python setup.py install
 
 # Install spaCy CUDA
-pip install spacy[cuda92]
+#pip install spacy[cuda92]
 
 ###
 # Anserini + Spark

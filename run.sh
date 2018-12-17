@@ -11,5 +11,5 @@ PY_FILES="src/spacy_ner.py,src/allen_ner.py"
 
 # Run the code...
 spark-2.4.0-bin-hadoop2.7/bin/spark-submit \
-	--master "local[*]" \
-	--py-files $PY_FILES --jars $ANSERINI src/main.py --index $INDEX --library allen --num 10
+	--master "local" \
+	--py-files $PY_FILES --jars $ANSERINI src/main.py --index $INDEX --library spacy

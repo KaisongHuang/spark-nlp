@@ -14,7 +14,7 @@ def get_docs(index):
     index_loader = sc._jvm.io.anserini.spark.JavaIndexLoader(sc._jsc, index)
 
     # Get the document IDs as an RDD
-    docids = index_loader.docIds()
+    docids = index_loader.docIds(10)
 
     # Get an instance of our Lucene RDD class
     lucene = sc._jvm.io.anserini.spark.JavaLuceneRDD(docids)
@@ -60,7 +60,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     sc = SparkContext(appName="CS 651 - NER")
-
+    
     # Keep track of the # of words processed for words / sec calculation
     total_words = sc.accumulator(0)
 

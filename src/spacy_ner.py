@@ -1,10 +1,10 @@
 import os
 
-import spacy
-
-
 # Called to enable GPU acceleration
 def setup(gpu):
+    
+    import spacy
+
     # Should we use a GPU?
     if gpu >= 0:
         # Set GPU env. variable
@@ -14,23 +14,24 @@ def setup(gpu):
         spacy.require_gpu()
 
     # Load the English model
-    nlp = spacy.load("en")
-
-    return nlp
+    return spacy.load("en", disable=["tagger"])
 
 
 # Given a document (list of paragraphs), perform NER on each sentence
-def ner(nlp, doc):
+def ner(nlp, docs):
+
     results = []
+    words = 0
 
     # For each parsed doc...
-    for parsed_doc in nlp.pipe(doc):
+    for doc in nlp.pipe(docs):
 
         # Keep track of sentences in the paragraph
         par = []
 
         # For each sentence in the paragraph, fetch the entities
-        for sentence in parsed_doc.sents:
+        for sentence in doc.sents:
+            words += len(sentence)
             par.append({
                 "text": sentence,
                 "entities": get_entities(sentence)
@@ -39,7 +40,7 @@ def ner(nlp, doc):
         # Add the paragraph to our results
         results.append(par)
 
-    return results
+    return results, words
 
 
 # Get the entities in a sentence

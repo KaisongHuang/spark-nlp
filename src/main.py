@@ -2,8 +2,10 @@ import argparse
 import json
 import time
 
-from pyspark import SparkContext
+import spacy_ner
+import allen_ner
 
+from pyspark import SparkContext
 
 def get_docs(index):
     from pyspark.mllib.common import _java2py
@@ -35,15 +37,17 @@ def get_paragraphs(document):
     return arr
 
 
-def run_spacy(doc):
+def run(doc):
+
     paragraphs = get_paragraphs(json.loads(doc["raw"]))
-    return spacy_ner.ner(nlp, paragraphs)
+    
+    if args.library == "spacy":
+        result, words = spacy_ner.ner(nlp, paragraphs)
+    else:        
+        result, words = allen_ner.ner(nlp, predictor, paragraphs)
 
-
-def run_allen(doc):
-    paragraphs = get_paragraphs(json.loads(doc["raw"]))
-    return allen_ner.ner(nlp, predictor, paragraphs)
-
+    total_words.add(words)
+    return result
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -55,36 +59,31 @@ if __name__ == "__main__":
     # Parse the args
     args = parser.parse_args()
 
-    sc = SparkContext(appName="spaCy NER")
+    sc = SparkContext(appName="CS 651 - NER")
+
+    # Keep track of the # of words processed for words / sec calculation
+    total_words = sc.accumulator(0)
 
     # Get the RDD of Lucene Documents
     docs = get_docs(args.index)
 
-    start = time.time()
-
     if args.library == "spacy":
-
-        import spacy_ner
-
-        # Setup spacy
         nlp = spacy_ner.setup(args.gpu)
-
-        if args.num < 1:
-            docs.foreach(lambda doc: run_spacy(doc))
-        else:
-            for doc in docs.take(args.num):
-                print("###\n# Document ID: %s\n###" % doc["id"])
-                run_spacy(doc)
-                # for paragraph in run(doc):
-                # print(paragraph)
-
-    if args.library == "allennlp":
-
-        import allen_ner
-
+    else:
         nlp, predictor = allen_ner.setup()
 
-        if args.num < 1:
-            docs.foreach(lambda doc: run_allen(doc))
+    start = time.time()
 
-    print("Took %d ms" % (time.time() - start))
+    if args.num < 1:
+        # Normal run over entire dataset
+        docs.foreach(lambda doc: run(doc))
+    else:
+        # Run over a subset of documents and log the responses
+        for doc in docs.take(args.num):
+            print("###\n# Document ID: %s\n###" % doc["id"])
+            for paragraph in run(doc):
+                print(paragraph)
+                
+    total_time  = time.time() - start
+    
+    print("Took %.2f s @ %.2f words/s" % (total_time, (total_words.value / total_time)))

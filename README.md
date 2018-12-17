@@ -7,7 +7,7 @@ The following script will setup the Conda environment (and install the dependenc
 After setup is complete, we need to setup our bash session:
 ```
 # If Conda isn't already sourced...
-. /home/ralph/anaconda3/etc/profile.d/conda.sh
+. /home/ryan1clancy/.miniconda/etc/profile.d/conda.sh
 
 # Required for CUDA
 export CUDA_HOME=/usr/local/cuda-9.2

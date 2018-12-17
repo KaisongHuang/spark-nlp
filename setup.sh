@@ -35,9 +35,6 @@ pip install allennlp
 # Create git directory
 mkdir git && cd git
 
-# Build thinc_gpu_ops from source because pip fails
-#git clone https://github.com/explosion/thinc_gpu_ops.git && cd thinc_gpu_ops && pip install -r requirements.txt && python setup.py install
-
 # Install spaCy CUDA
 #pip install spacy[cuda92]
 

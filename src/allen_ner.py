@@ -4,8 +4,6 @@ def setup():
     from spacy import load
 
     segmenter = load("en", disable=["tagger", "ner"])
-    # segmenter.disable_pipes("parser", "tagger", "ner")
-    # segmenter.add_pipe(segmenter.create_pipe("sentencizer"))
     
     predictor = Predictor.from_path("https://s3-us-west-2.amazonaws.com/allennlp/models/ner-model-2018.04.26.tar.gz")
 
@@ -22,8 +20,11 @@ def ner(nlp, predictor, docs):
         par = []
 
         batch = [{"sentence": sentence.text} for sentence in doc.sents]
-        predictions = predictor.predict_batch_json(batch)
-        print(len(predictions))
+
+        try:
+            predictions = predictor.predict_batch_json(batch)
+        except:
+            continue
 
         for prediction in predictions:
             words += len(prediction["words"])
@@ -31,5 +32,7 @@ def ner(nlp, predictor, docs):
                 "text": prediction["words"],
                 "entities": prediction["tags"]
             })
+
+        results.append(par)
 
     return results, words

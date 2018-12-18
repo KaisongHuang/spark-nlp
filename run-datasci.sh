@@ -13,6 +13,8 @@ export PYSPARK_PYTHON="venv/bin/python"
 export PYSPARK_DRIVER_PYTHON="venv/bin/python"
 
 # Run the code...
-spark-2.4.0-bin-hadoop2.7/bin/spark-submit \
-	--master "local[2]" --executor-memory 8G --driver-memory 8G \
-	--py-files $PY_FILES --jars $ANSERINI src/main.py --index $INDEX --library spacy --num 100
+spark-submit \
+	--num-executors 5 --executor-cores 4 --executor-memory 8G --driver-memory 8G \
+	--conf "spark.yarn.appMasterEnv.PYSPARK_PYTHON=$PYSPARK_PYTHON" \
+	--archives "venv.zip#venv" \
+	--py-files $PY_FILES --jars $ANSERINI src/main.py --index $INDEX --library spacy

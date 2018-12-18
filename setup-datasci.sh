@@ -1,8 +1,5 @@
 #!/bin/bash
 
-# Environment name
-ENV_NAME="bigdata"
-
 # Base directory
 BASE=`pwd`
 
@@ -10,17 +7,14 @@ BASE=`pwd`
 # Setup Python Environment
 ###
 
-# Source Anaconda
-. /u5/raclancy/miniconda3/etc/profile.d/conda.sh
+# Create venv
+virtualenv -p /usr/bin/python3 venv
 
-# Create conda environment
-conda create --name $ENV_NAME python=3.7
+# Source venv
+. venv/bin/activate
 
-# Activate the enviroment
-conda activate $ENV_NAME
-
-# Install spaCy
-conda install -c conda-forge spacy
+# Download spaCy
+pip install spacy
 
 # Download spaCy English model
 python -m spacy download en
@@ -28,15 +22,15 @@ python -m spacy download en
 # Download AllenNLP
 pip install allennlp
 
-###
-# CUDA - Disabled for now
-###
+cd venv
+
+# Dependencies for Spark workers
+zip -qr ../venv.zip .
+
+cd $BASE
 
 # Create git directory
 mkdir git && cd git
-
-# Install spaCy CUDA
-#pip install spacy[cuda92]
 
 ###
 # Anserini + Spark

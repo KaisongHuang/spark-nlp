@@ -1,20 +1,19 @@
-import argparse
-import json
 import time
 
-import spacy_ner
-import allen_ner
-
+import argparse
+import json
 from pyspark import SparkContext
+
+from libs import spacy
 
 def get_docs(index):
     from pyspark.mllib.common import _java2py
 
     # Get an instance of the JavaIndexLoader
-    index_loader = sc._jvm.io.anserini.spark.JavaIndexLoader(sc._jsc, index)
+    index_loader = sc._jvm.io.anserini.spark.IndexLoader(sc._jsc, index)
 
     # Get the document IDs as an RDD
-    docids = index_loader.docIds(10)
+    docids = index_loader.docids()
 
     # Get an instance of our Lucene RDD class
     lucene = sc._jvm.io.anserini.spark.JavaLuceneRDD(docids)
@@ -38,29 +37,27 @@ def get_paragraphs(document):
 
 
 def run(doc):
-
     paragraphs = get_paragraphs(json.loads(doc["raw"]))
-    
+
     if args.library == "spacy":
-        result, words = spacy_ner.ner(nlp, paragraphs)
-    else:        
-        result, words = allen_ner.ner(nlp, predictor, paragraphs)
+        result, words = spacy.ner.process(nlp, paragraphs)
 
     total_words.add(words)
     return result
 
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--gpu", default=-1, type=int, help="the GPU number to use")
     parser.add_argument("--index", required=True, type=str, help="the index path")
     parser.add_argument("--num", default=-1, type=int, help="the number of documents use")
-    parser.add_argument("--library", default="spacy", type=str, help="spacy vs. allennlp")
+    parser.add_argument("--library", default="spacy", type=str, help="spacy vs. stanford")
+    parser.add_argument("--task", default="ner", type=str, help="the task to run")
 
     # Parse the args
     args = parser.parse_args()
 
-    sc = SparkContext(appName="CS 651 - NER")
-    
+    sc = SparkContext(appName="Spark NLP - {}:{}".format(args.library, args.task))
+
     # Keep track of the # of words processed for words / sec calculation
     total_words = sc.accumulator(0)
 
@@ -68,9 +65,7 @@ if __name__ == "__main__":
     docs = get_docs(args.index)
 
     if args.library == "spacy":
-        nlp = spacy_ner.setup(args.gpu)
-    else:
-        nlp, predictor = allen_ner.setup()
+        nlp = spacy.ner.setup(args.gpu)
 
     start = time.time()
 
@@ -83,7 +78,7 @@ if __name__ == "__main__":
             print("###\n# Document ID: %s\n###" % doc["id"])
             for paragraph in run(doc):
                 print(paragraph)
-                
-    total_time  = time.time() - start
-    
+
+    total_time = time.time() - start
+
     print("Took %.2f s @ %.2f words/s" % (total_time, (total_words.value / total_time)))

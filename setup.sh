@@ -1,52 +1,33 @@
 #!/bin/bash
 
-# Environment name
-ENV_NAME="bigdata"
-
-# Base directory
-BASE=`pwd`
-
 ###
 # Setup Python Environment
 ###
 
-# Source Anaconda
-. /u5/raclancy/miniconda3/etc/profile.d/conda.sh
+# Create venv
+virtualenv -p /usr/bin/python3 venv
 
-# Create conda environment
-conda create --name $ENV_NAME python=3.7
+# Source venv
+source venv/bin/activate
 
-# Activate the enviroment
-conda activate $ENV_NAME
+# Update setuptools
+pip install -U setuptools
 
-# Install spaCy
-conda install -c conda-forge spacy
+# Download spaCy
+pip install spacy
 
 # Download spaCy English model
 python -m spacy download en
 
-# Download AllenNLP
-pip install allennlp
+# Dependencies for Spark workers
+zip -qr venv.zip venv/*
 
 ###
-# CUDA - Disabled for now
+# Anserini-Spark
 ###
 
 # Create git directory
 mkdir git && cd git
 
-# Install spaCy CUDA
-#pip install spacy[cuda92]
-
-###
-# Anserini + Spark
-###
-
 # Setup Anserini-Spark
 git clone https://github.com/castorini/Anserini-Spark.git && cd Anserini-Spark && mvn clean package
-
-# Back to the base...
-cd $BASE
-
-# Setup Spark
-wget -qO- http://mirror.csclub.uwaterloo.ca/apache/spark/spark-2.4.0/spark-2.4.0-bin-hadoop2.7.tgz | tar -zxv

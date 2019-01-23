@@ -1,25 +1,11 @@
-import os
-
-# Called to enable GPU acceleration
-def setup(gpu):
-    
+# Do some setup
+def setup():
     import spacy
-
-    # Should we use a GPU?
-    if gpu >= 0:
-        # Set GPU env. variable
-        os.environ["CUDA_VISIBLE_DEVICES"] = str(gpu)
-
-        # Tell spacy to use the GPU
-        spacy.require_gpu()
-
-    # Load the English model
     return spacy.load("en", disable=["tagger"])
 
 
 # Given a document (list of paragraphs), perform NER on each sentence
-def ner(nlp, docs):
-
+def process(nlp, docs):
     results = []
     words = 0
 

@@ -14,7 +14,7 @@ source venv/bin/activate
 pip install -U setuptools
 
 # Download spaCy
-pip install spacy
+pip install -U spacy
 
 # Download spaCy English model
 python -m spacy download en

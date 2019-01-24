@@ -1,7 +1,7 @@
 from ..task import Task
 
 
-class CoreNLPNamedEntityRecognition(Task):
+class StanfordSentenceSegmenter(Task):
 
     def __init__(self, config):
         print(config)

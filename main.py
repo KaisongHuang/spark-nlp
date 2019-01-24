@@ -72,29 +72,29 @@ if __name__ == "__main__":
     # CoreNLP
     if args.library == "corenlp":
         if args.task == "ner":
-            task = CoreNLPNamedEntityRecognition()
+            task = CoreNLPNamedEntityRecognition({})
         if args.task == "pos":
-            task = CoreNLPPartOfSpeechTagger()
+            task = CoreNLPPartOfSpeechTagger({})
         if args.task == "seg":
-            task = CoreNLPSentenceSegmenter()
+            task = CoreNLPSentenceSegmenter({})
 
     # NLTK
     if args.library == "nltk":
         if args.task == "ner":
-            task = NLTKNamedEntityRecognition()
+            task = NLTKNamedEntityRecognition({})
         if args.task == "pos":
-            task = NLTKPartOfSpeechTagger()
+            task = NLTKPartOfSpeechTagger({})
         if args.task == "seg":
-            task = NLTKSentenceSegmenter()
+            task = NLTKSentenceSegmenter({})
 
     # spaCy
     if args.library == "spacy":
         if args.task == "ner":
-            task = SpacyNamedEntityRecognition()
+            task = SpacyNamedEntityRecognition({})
         if args.task == "pos":
-            task = SpacyPartOfSpeechTagger()
+            task = SpacyPartOfSpeechTagger({})
         if args.task == "seg":
-            task = SpacySentenceSegmenter()
+            task = SpacySentenceSegmenter({})
 
     start = time.time()
 

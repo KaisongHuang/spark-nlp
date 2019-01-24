@@ -4,7 +4,7 @@
 ANSERINI="git/Anserini-Spark/target/anserini-spark-0.0.1-SNAPSHOT-fatjar.jar"
 
 # The Lucene index directory
-INDEX="hdfs://indexes/core18"
+INDEX="hdfs://node-master:9000/indexes/core17"
 
 # The files to include in the PYPATH
 PY_FILES="src/libs/spacy/ner.py"

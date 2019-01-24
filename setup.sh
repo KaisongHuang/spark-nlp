@@ -13,7 +13,10 @@ source venv/bin/activate
 # Update setuptools
 pip install -U setuptools
 
-# Download spaCy
+# Install NLTK
+pip install -U nltk
+
+# Install spaCy
 pip install -U spacy
 
 # Download spaCy English model

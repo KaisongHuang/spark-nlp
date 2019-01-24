@@ -1,34 +1,37 @@
-# Do some setup
-def setup():
-    import spacy
-    return spacy.load("en", disable=["tagger"])
+from ..task import Task
+
+import spacy
 
 
-# Given a document (list of paragraphs), perform NER on each sentence
-def process(nlp, docs):
-    results = []
-    words = 0
+class SpacyNamedEntityRecognition(Task):
 
-    # For each parsed doc...
-    for doc in nlp.pipe(docs):
+    def __init__(self, config):
+        self.config = config
+        self.nlp = spacy.load("en", disable=["tagger"])
 
-        # Keep track of sentences in the paragraph
-        par = []
+    def run(self, data):
+        results = []
+        words = 0
 
-        # For each sentence in the paragraph, fetch the entities
-        for sentence in doc.sents:
-            words += len(sentence)
-            par.append({
-                "text": sentence,
-                "entities": get_entities(sentence)
-            })
+        # For each parsed doc...
+        for doc in self.nlp.pipe(data):
 
-        # Add the paragraph to our results
-        results.append(par)
+            # Keep track of sentences in the paragraph
+            par = []
 
-    return results, words
+            # For each sentence in the paragraph, fetch the entities
+            for sentence in doc.sents:
+                words += len(sentence)
+                par.append({
+                    "text": sentence,
+                    "entities": self.get_entities(sentence)
+                })
 
+            # Add the paragraph to our results
+            results.append(par)
 
-# Get the entities in a sentence
-def get_entities(sent):
-    return [{e.text: (e.label_, e.start_char - e.sent.start_char, e.end_char - e.sent.start_char)} for e in sent.ents]
+        return results, words
+
+    def get_entities(self, sent):
+        return [{e.text: (e.label_, e.start_char - e.sent.start_char, e.end_char - e.sent.start_char)} for e in
+                sent.ents]

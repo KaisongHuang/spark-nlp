@@ -45,7 +45,7 @@ def run(doc):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--index", required=True, type=str, help="the index path")
-    parser.add_argument("--library", default="spacy", type=str, help="spacy vs. stanford vs. nltk")
+    parser.add_argument("--library", default="spacy", type=str, help="spacy vs. corenlp vs. nltk")
     parser.add_argument("--task", default="ner", type=str, help="ner vs. pos vs. seg")
     parser.add_argument("--num", default=-1, type=int, help="the number of documents use")
 

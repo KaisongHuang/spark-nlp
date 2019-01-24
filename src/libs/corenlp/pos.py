@@ -1,7 +1,7 @@
 from ..task import Task
 
 
-class StanfordPartOfSpeechTagger(Task):
+class CoreNLPPartOfSpeechTagger(Task):
 
     def __init__(self, config):
         print(config)

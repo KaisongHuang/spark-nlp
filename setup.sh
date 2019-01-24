@@ -38,7 +38,7 @@ zip -qr ../venv.zip .
 cd $BASE
 
 # Create git directory
-mkdir git && cd git
+#mkdir git && cd git
 
 # Setup Anserini-Spark
 #git clone https://github.com/castorini/Anserini-Spark.git && cd Anserini-Spark && mvn clean package

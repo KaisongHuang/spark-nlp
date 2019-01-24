@@ -4,6 +4,10 @@ import time
 
 from pyspark import SparkContext
 
+from libs.corenlp.ner import CoreNLPNamedEntityRecognition
+from libs.corenlp.pos import CoreNLPPartOfSpeechTagger
+from libs.corenlp.seg import CoreNLPSentenceSegmenter
+
 from libs.nltk.ner import NLTKNamedEntityRecognition
 from libs.nltk.pos import NLTKPartOfSpeechTagger
 from libs.nltk.seg import NLTKSentenceSegmenter
@@ -50,7 +54,7 @@ def run(doc):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--index", required=True, type=str, help="the index path")
-    parser.add_argument("--library", default="spacy", type=str, help="spacy vs. corenlp vs. nltk")
+    parser.add_argument("--library", default="spacy", type=str, help="corenlp vs. nltk vs. spacy")
     parser.add_argument("--task", default="ner", type=str, help="ner vs. pos vs. seg")
     parser.add_argument("--num", default=-1, type=int, help="the number of documents use")
 
@@ -64,6 +68,15 @@ if __name__ == "__main__":
 
     # Get the RDD of Lucene Documents
     docs = get_docs(args.index)
+
+    # CoreNLP
+    if args.library == "corenlp":
+        if args.task == "ner":
+            task = CoreNLPNamedEntityRecognition()
+        if args.task == "pos":
+            task = CoreNLPPartOfSpeechTagger()
+        if args.task == "seg":
+            task = CoreNLPSentenceSegmenter()
 
     # NLTK
     if args.library == "nltk":

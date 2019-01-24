@@ -14,11 +14,8 @@ def get_docs(index):
     # Get the document IDs as an RDD
     docids = index_loader.docids()
 
-    # Get an instance of our Lucene RDD class
-    lucene = sc._jvm.io.anserini.spark.JavaLuceneRDD(docids)
-
     # Get the JavaRDD of Lucene Document as a Map (Document can't be serialized)
-    docs = lucene.getDocs(index)
+    docs = index_loader.docs2map(docids, index)
 
     # Convert to a Python RDD
     return _java2py(sc, docs)
@@ -62,12 +59,12 @@ if __name__ == "__main__":
 
     if args.library == "spacy":
         if args.task == "ner":
-            from .libs.spacy.ner import StanfordNamedEntityRecognition
-            task = StanfordNamedEntityRecognition()
+            from libs.spacy.ner import SpacyNamedEntityRecognition
+            task = SpacyNamedEntityRecognition({})
 
     start = time.time()
 
-    if args.num > 1:
+    if args.num < 1:
         docs.foreach(lambda doc: run(doc))
     else:
         for doc in docs.take(args.num):

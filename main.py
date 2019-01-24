@@ -4,6 +4,14 @@ import time
 
 from pyspark import SparkContext
 
+from libs.nltk.ner import NLTKNamedEntityRecognition
+from libs.nltk.pos import NLTKPartOfSpeechTagger
+from libs.nltk.seg import NLTKSentenceSegmenter
+
+from libs.spacy.ner import SpacyNamedEntityRecognition
+from libs.spacy.pos import SpacyPartOfSpeechTagger
+from libs.spacy.seg import SpacySentenceSegmenter
+
 
 def get_docs(index):
     from pyspark.mllib.common import _java2py
@@ -57,10 +65,23 @@ if __name__ == "__main__":
     # Get the RDD of Lucene Documents
     docs = get_docs(args.index)
 
+    # NLTK
+    if args.library == "nltk":
+        if args.task == "ner":
+            task = NLTKNamedEntityRecognition()
+        if args.task == "pos":
+            task = NLTKPartOfSpeechTagger()
+        if args.task == "seg":
+            task = NLTKSentenceSegmenter()
+
+    # spaCy
     if args.library == "spacy":
         if args.task == "ner":
-            from libs.spacy.ner import SpacyNamedEntityRecognition
-            task = SpacyNamedEntityRecognition({})
+            task = SpacyNamedEntityRecognition()
+        if args.task == "pos":
+            task = SpacyPartOfSpeechTagger()
+        if args.task == "seg":
+            task = SpacySentenceSegmenter()
 
     start = time.time()
 

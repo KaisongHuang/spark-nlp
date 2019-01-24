@@ -11,15 +11,19 @@ virtualenv -p /usr/bin/python3 venv
 source venv/bin/activate
 
 # Update setuptools
-pip install -U setuptools
+pip install -U pip setuptools
 
-# Download spaCy
+# Install NLTK
+pip install -U nltk
+
+# Install spaCy
 pip install -U spacy
 
 # Download spaCy English model
 python -m spacy download en
 
 # Dependencies for Spark workers
+zip -qr libs.zip libs
 zip -qr venv.zip venv/*
 
 ###
@@ -27,7 +31,7 @@ zip -qr venv.zip venv/*
 ###
 
 # Create git directory
-mkdir git && cd git
+#mkdir git && cd git
 
 # Setup Anserini-Spark
-git clone https://github.com/castorini/Anserini-Spark.git && cd Anserini-Spark && mvn clean package
+#git clone https://github.com/castorini/Anserini-Spark.git && cd Anserini-Spark && mvn clean package

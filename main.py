@@ -1,10 +1,9 @@
-import time
-
 import argparse
 import json
+import time
+
 from pyspark import SparkContext
 
-from libs import spacy
 
 def get_docs(index):
     from pyspark.mllib.common import _java2py
@@ -15,11 +14,8 @@ def get_docs(index):
     # Get the document IDs as an RDD
     docids = index_loader.docids()
 
-    # Get an instance of our Lucene RDD class
-    lucene = sc._jvm.io.anserini.spark.JavaLuceneRDD(docids)
-
     # Get the JavaRDD of Lucene Document as a Map (Document can't be serialized)
-    docs = lucene.getDocs(index)
+    docs = index_loader.docs2map(docids, index)
 
     # Convert to a Python RDD
     return _java2py(sc, docs)
@@ -38,10 +34,7 @@ def get_paragraphs(document):
 
 def run(doc):
     paragraphs = get_paragraphs(json.loads(doc["raw"]))
-
-    if args.library == "spacy":
-        result, words = spacy.ner.process(nlp, paragraphs)
-
+    result, words = task.run(paragraphs)
     total_words.add(words)
     return result
 
@@ -49,9 +42,9 @@ def run(doc):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--index", required=True, type=str, help="the index path")
+    parser.add_argument("--library", default="spacy", type=str, help="spacy vs. corenlp vs. nltk")
+    parser.add_argument("--task", default="ner", type=str, help="ner vs. pos vs. seg")
     parser.add_argument("--num", default=-1, type=int, help="the number of documents use")
-    parser.add_argument("--library", default="spacy", type=str, help="spacy vs. stanford")
-    parser.add_argument("--task", default="ner", type=str, help="the task to run")
 
     # Parse the args
     args = parser.parse_args()
@@ -65,15 +58,15 @@ if __name__ == "__main__":
     docs = get_docs(args.index)
 
     if args.library == "spacy":
-        nlp = spacy.ner.setup(args.gpu)
+        if args.task == "ner":
+            from libs.spacy.ner import SpacyNamedEntityRecognition
+            task = SpacyNamedEntityRecognition({})
 
     start = time.time()
 
     if args.num < 1:
-        # Normal run over entire dataset
         docs.foreach(lambda doc: run(doc))
     else:
-        # Run over a subset of documents and log the responses
         for doc in docs.take(args.num):
             print("###\n# Document ID: %s\n###" % doc["id"])
             for paragraph in run(doc):

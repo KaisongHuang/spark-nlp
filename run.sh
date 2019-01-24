@@ -4,7 +4,7 @@
 ANSERINI="/home/raclancy/anserini-spark-0.0.1-SNAPSHOT-fatjar.jar"
 
 # The Lucene index directory
-INDEX="hdfs://node-master:9000/indexes/lucene-index.core18.pos+docvectors+rawdocs"
+INDEX="hdfs://node-master:9000/indexes/core18-1000"
 
 # The files to include in the PYPATH
 PY_FILES="libs.zip"

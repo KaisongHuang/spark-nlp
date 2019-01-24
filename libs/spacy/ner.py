@@ -1,6 +1,6 @@
-from ..task import Task
-
 import spacy
+
+from ..task import Task
 
 
 class SpacyNamedEntityRecognition(Task):

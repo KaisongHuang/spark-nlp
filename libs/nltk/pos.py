@@ -7,7 +7,7 @@ class NLTKPartOfSpeechTagger(Task):
 
     def __init__(self, config):
         self.config = config
-        nltk.download('averaged_perceptron_tagger')
+        nltk.download("averaged_perceptron_tagger")
 
     def run(self, data):
         paragraphs = []

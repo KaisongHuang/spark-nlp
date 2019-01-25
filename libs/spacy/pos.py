@@ -10,8 +10,7 @@ class SpacyPartOfSpeechTagger(Task):
         self.nlp = spacy.load("en")
 
     def run(self, data):
-        paragraphs = []
-        words = 0
+        paragraphs = [], words = 0
         for paragraph in self.nlp.pipe(data):
             sentences = []
             for sentence in paragraph.sents:

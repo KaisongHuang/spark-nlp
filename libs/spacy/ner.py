@@ -1,13 +1,13 @@
-from ..task import Task
-
 import spacy
+
+from ..task import Task
 
 
 class SpacyNamedEntityRecognition(Task):
 
     def __init__(self, config):
         self.config = config
-        self.nlp = spacy.load("en", disable=["tagger"])
+        self.nlp = spacy.load("en")
 
     def run(self, data):
         results = []

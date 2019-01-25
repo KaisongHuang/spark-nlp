@@ -19,5 +19,6 @@ class SpacyPartOfSpeechTagger(Task):
                 for token in sentence:
                     tokens.append("{}[{}]".format(token.text, token.pos_))
                 sentences.append(" ".join(str(t) for t in tokens))
+                words += len(sentence)
             paragraphs.append(sentences)
         return paragraphs, words

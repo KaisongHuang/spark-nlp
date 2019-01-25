@@ -17,4 +17,4 @@ spark-submit \
 	--num-executors 9 --executor-cores 16 --executor-memory 32G --driver-memory 32G \
 	--conf "spark.yarn.appMasterEnv.PYSPARK_PYTHON=$PYSPARK_PYTHON" \
 	--archives "venv.zip#venv" \
-	--py-files $PY_FILES --jars $ANSERINI main.py --index $INDEX --library spacy --task ner --num 10
+	--py-files $PY_FILES --jars $ANSERINI main.py --index $INDEX --library spacy --task pos --num 10

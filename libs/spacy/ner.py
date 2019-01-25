@@ -10,7 +10,8 @@ class SpacyNamedEntityRecognition(Task):
         self.nlp = spacy.load("en")
 
     def run(self, data):
-        results = [], words = 0
+        results = []
+        words = 0
 
         # For each parsed doc...
         for doc in self.nlp.pipe(data):

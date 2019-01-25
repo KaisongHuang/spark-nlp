@@ -10,7 +10,8 @@ class SpacySentenceSegmenter(Task):
         self.nlp = spacy.load("en")
 
     def run(self, data):
-        paragraphs = [], words = 0
+        paragraphs = []
+        words = 0
         for doc in self.nlp.pipe(data):
             sentences = []
             for sentence in doc.sents:

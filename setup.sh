@@ -1,5 +1,7 @@
 #!/bin/bash
 
+BASE=`pwd`
+
 ###
 # Setup Python Environment
 ###
@@ -22,13 +24,18 @@ pip install -U spacy
 # Download spaCy English model
 python -m spacy download en
 
-# Dependencies for Spark workers
-zip -qr libs.zip libs
-zip -qr venv.zip venv/*
+# Out libs folder for the Spark workers (via --py-files)
+zip -qr libs.zip libs/
+
+# Dependencies for Spark workers (via --archives)
+cd venv
+zip -qr ../venv.zip .
 
 ###
 # Anserini-Spark
 ###
+
+cd $BASE
 
 # Create git directory
 #mkdir git && cd git

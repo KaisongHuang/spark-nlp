@@ -69,11 +69,11 @@ if __name__ == "__main__":
     # CoreNLP
     if args.library == "corenlp":
         if args.task == "ner":
-            task = CoreNLPNamedEntityRecognition({})
+            task = CoreNLPNamedEntityRecognition(sc)
         if args.task == "pos":
-            task = CoreNLPPartOfSpeechTagger({})
+            task = CoreNLPPartOfSpeechTagger(sc)
         if args.task == "seg":
-            task = CoreNLPSentenceSegmenter({})
+            task = CoreNLPSentenceSegmenter(sc)
 
     # NLTK
     if args.library == "nltk":

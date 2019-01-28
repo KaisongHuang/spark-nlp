@@ -20,11 +20,14 @@ class CoreNLPSentenceSegmenter(Task):
 
         for paragraph in data:
             sentences = []
-            anno = self.sc._jvm.edu.stanford.nlp.pipeline.Annotation(paragraph)
-            self.pipeline.annotate(anno)
-            sent_anno = self.sc._jvm.edu.stanford.nlp.ling.CoreAnnotations.SentencesAnnotation()
-            for sentence in anno.get(sent_anno.getClass()):
+
+            doc = self.sc._jvm.edu.stanford.nlp.pipeline.CoreDocument(paragraph)
+            self.pipeline.annotate(doc)
+
+            for sentence in doc.sentences():
                 sentences.append(str(sentence))
                 words += len(sentence)
+
             paragraphs.append(sentences)
+
         return paragraphs, words

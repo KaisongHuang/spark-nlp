@@ -24,20 +24,16 @@ class CoreNLPNamedEntityRecognition(Task):
             # Keep track of sentences in the paragraph
             par = []
 
-            # For each sentence in the paragraph, fetch the entities
-            anno = self.sc._jvm.edu.stanford.nlp.pipeline.Annotation(paragraph)
-            self.pipeline.annotate(anno)
-            sent_anno = self.sc._jvm.edu.stanford.nlp.ling.CoreAnnotations.SentencesAnnotation()
-            for sentence in anno.get(sent_anno.getClass()):
-                words += len(sentence)
+            doc = self.sc._jvm.edu.stanford.nlp.pipeline.CoreDocument(paragraph)
+            self.pipeline.annotate(doc)
 
-                # Get an instance of the CoreDocument
-                doc = self.sc._jvm.edu.stanford.nlp.pipeline.CoreDocument(sentence)
-                self.pipeline.annotate(doc)
+            # For each sentence in the paragraph, fetch the entities
+            for sentence in doc.sentences():
+                words += len(sentence)
 
                 par.append({
                     "text": sentence,
-                    "entities": self.get_entities(doc)
+                    "entities": self.get_entities(sentence)
                 })
 
             # Add the paragraph to our results

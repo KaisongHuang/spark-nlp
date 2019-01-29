@@ -1,4 +1,5 @@
 import os
+
 import spacy
 
 from ..task import Task
@@ -10,7 +11,7 @@ class SpacySentenceSegmenter(Task):
         if gpu >= 0:
             os.environ["CUDA_VISIBLE_DEVICES"] = str(gpu)
             spacy.require_gpu()
-        self.nlp = spacy.load("en")
+        self.nlp = spacy.load("en", disable=["ner", "tagger"])
 
     def run(self, data):
         paragraphs = []

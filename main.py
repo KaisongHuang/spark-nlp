@@ -7,6 +7,9 @@ from pyspark import SparkContext
 from libs.allen.ner import AllenNLPNamedEntityRecognition
 from libs.allen.pos import AllenNLPPartOfSpeechTagger
 from libs.allen.seg import AllenNLPSentenceSegmenter
+from libs.corenlp.ner import CoreNLPNamedEntityRecognition
+from libs.corenlp.pos import CoreNLPPartOfSpeechTagger
+from libs.corenlp.seg import CoreNLPSentenceSegmenter
 from libs.nltk.ner import NLTKNamedEntityRecognition
 from libs.nltk.pos import NLTKPartOfSpeechTagger
 from libs.nltk.seg import NLTKSentenceSegmenter
@@ -36,14 +39,14 @@ def get_task():
         if args.task == "seg":
             return AllenNLPSentenceSegmenter(args.gpu)
 
-    # CoreNLP
-    if args.library == "corenlp":
-        if args.task == "ner":
-            return CoreNLPNamedEntityRecognition(sc)
-        if args.task == "pos":
-            return CoreNLPPartOfSpeechTagger(sc)
-        if args.task == "seg":
-            return CoreNLPSentenceSegmenter(sc)
+    # # CoreNLP
+    # if args.library == "corenlp":
+    #     if args.task == "ner":
+    #         return CoreNLPNamedEntityRecognition(sc)
+    #     if args.task == "pos":
+    #         return CoreNLPPartOfSpeechTagger(sc)
+    #     if args.task == "seg":
+    #         return CoreNLPSentenceSegmenter(sc)
 
     # NLTK
     if args.library == "nltk":

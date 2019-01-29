@@ -1,7 +1,5 @@
 #!/bin/bash
 
-BASE=`pwd`
-
 ###
 # Setup Python Environment
 ###

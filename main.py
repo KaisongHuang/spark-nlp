@@ -7,9 +7,6 @@ from pyspark import SparkContext
 from libs.allen.ner import AllenNLPNamedEntityRecognition
 from libs.allen.pos import AllenNLPPartOfSpeechTagger
 from libs.allen.seg import AllenNLPSentenceSegmenter
-from libs.corenlp.ner import CoreNLPNamedEntityRecognition
-from libs.corenlp.pos import CoreNLPPartOfSpeechTagger
-from libs.corenlp.seg import CoreNLPSentenceSegmenter
 from libs.nltk.ner import NLTKNamedEntityRecognition
 from libs.nltk.pos import NLTKPartOfSpeechTagger
 from libs.nltk.seg import NLTKSentenceSegmenter
@@ -30,7 +27,6 @@ def get_paragraphs(document):
 
 
 def get_task():
-
     # AllenNLP
     if args.library == "allen":
         if args.task == "ner":
@@ -86,7 +82,7 @@ if __name__ == "__main__":
     parser.add_argument("--library", default="spacy", type=str, help="allennlp vs. corenlp vs. nltk vs. spacy")
     parser.add_argument("--gpu", default=-1, type=int, help="the GPU number to use (spacy or allennlp)")
     parser.add_argument("--task", default="ner", type=str, help="ner vs. pos vs. seg")
-    parser.add_argument("--sample", default=-1, type=float, help="the # of sample to take")
+    parser.add_argument("--sample", default=-1, type=float, help="the % of sample to take")
 
     # Parse the args
     args = parser.parse_args()

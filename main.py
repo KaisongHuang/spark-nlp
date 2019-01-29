@@ -4,6 +4,9 @@ import time
 
 from pyspark import SparkContext
 
+from libs.allen.ner import AllenNLPNamedEntityRecognition
+from libs.allen.pos import AllenNLPPartOfSpeechTagger
+from libs.allen.seg import AllenNLPSentenceSegmenter
 from libs.corenlp.ner import CoreNLPNamedEntityRecognition
 from libs.corenlp.pos import CoreNLPPartOfSpeechTagger
 from libs.corenlp.seg import CoreNLPSentenceSegmenter
@@ -28,6 +31,15 @@ def get_paragraphs(document):
 
 def get_task():
     task = None
+
+    # AllenNLP
+    if args.library == "allen":
+        if args.task == "ner":
+            task = AllenNLPNamedEntityRecognition({})
+        if args.task == "pos":
+            task = AllenNLPPartOfSpeechTagger({})
+        if args.task == "seg":
+            task = AllenNLPSentenceSegmenter({})
 
     # CoreNLP
     if args.library == "corenlp":
@@ -74,7 +86,7 @@ def process(part):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--collection", required=True, type=str, help="the collection file")
-    parser.add_argument("--library", default="spacy", type=str, help="corenlp vs. nltk vs. spacy")
+    parser.add_argument("--library", default="spacy", type=str, help="allennlp vs. corenlp vs. nltk vs. spacy")
     parser.add_argument("--task", default="ner", type=str, help="ner vs. pos vs. seg")
     parser.add_argument("--sample", default=-1, type=float, help="the # of sample to take")
 

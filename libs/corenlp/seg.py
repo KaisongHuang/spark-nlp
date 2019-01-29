@@ -9,7 +9,7 @@ class CoreNLPSentenceSegmenter(Task):
         # Get an instance of the Properties
         self.props = self.sc._jvm.java.util.Properties()
         self.setProperty("annotators", "tokenize")
-        self.setProperty("ner.useSUTime", "false");
+        self.setProperty("ner.useSUTime", "false")
 
         # Get an instance of the Pipeline
         self.pipeline = self.sc._jvm.edu.stanford.nlp.pipeline.StanfordCoreNLP(self.props)

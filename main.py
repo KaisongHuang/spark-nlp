@@ -30,7 +30,6 @@ def get_paragraphs(document):
 
 
 def get_task():
-
     # AllenNLP
     if args.library == "allen":
         if args.task == "ner":
@@ -40,14 +39,14 @@ def get_task():
         if args.task == "seg":
             return AllenNLPSentenceSegmenter(args.gpu)
 
-    # CoreNLP
-    if args.library == "corenlp":
-        if args.task == "ner":
-            return CoreNLPNamedEntityRecognition(sc)
-        if args.task == "pos":
-            return CoreNLPPartOfSpeechTagger(sc)
-        if args.task == "seg":
-            return CoreNLPSentenceSegmenter(sc)
+    # # CoreNLP
+    # if args.library == "corenlp":
+    #     if args.task == "ner":
+    #         return CoreNLPNamedEntityRecognition(sc)
+    #     if args.task == "pos":
+    #         return CoreNLPPartOfSpeechTagger(sc)
+    #     if args.task == "seg":
+    #         return CoreNLPSentenceSegmenter(sc)
 
     # NLTK
     if args.library == "nltk":
@@ -86,7 +85,7 @@ if __name__ == "__main__":
     parser.add_argument("--library", default="spacy", type=str, help="allennlp vs. corenlp vs. nltk vs. spacy")
     parser.add_argument("--gpu", default=-1, type=int, help="the GPU number to use (spacy or allennlp)")
     parser.add_argument("--task", default="ner", type=str, help="ner vs. pos vs. seg")
-    parser.add_argument("--sample", default=-1, type=float, help="the # of sample to take")
+    parser.add_argument("--sample", default=-1, type=float, help="the % of sample to take")
 
     # Parse the args
     args = parser.parse_args()

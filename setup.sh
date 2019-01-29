@@ -15,11 +15,14 @@ source venv/bin/activate
 # Update setuptools
 pip install -U pip setuptools
 
+# Install AllenNLP
+pip install -U allennlp
+
 # Install NLTK
 pip install -U nltk
 
 # Install spaCy
-pip install -U spacy
+pip install -U spacy spacy[cuda92]
 
 # Download spaCy English model
 python -m spacy download en
@@ -30,15 +33,3 @@ zip -qr libs.zip libs/
 # Dependencies for Spark workers (via --archives)
 cd venv
 zip -qr ../venv.zip .
-
-###
-# Anserini-Spark
-###
-
-cd $BASE
-
-# Create git directory
-#mkdir git && cd git
-
-# Setup Anserini-Spark
-#git clone https://github.com/castorini/Anserini-Spark.git && cd Anserini-Spark && mvn clean package

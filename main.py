@@ -3,7 +3,6 @@ import json
 import time
 
 from pyspark import SparkContext
-from pyspark.mllib.common import _java2py
 
 from libs.corenlp.ner import CoreNLPNamedEntityRecognition
 from libs.corenlp.pos import CoreNLPPartOfSpeechTagger
@@ -14,20 +13,6 @@ from libs.nltk.seg import NLTKSentenceSegmenter
 from libs.spacy.ner import SpacyNamedEntityRecognition
 from libs.spacy.pos import SpacyPartOfSpeechTagger
 from libs.spacy.seg import SpacySentenceSegmenter
-
-
-def get_docs(index):
-    # Get an instance of the IndexLoader
-    index_loader = sc._jvm.io.anserini.spark.IndexLoader(sc._jsc, index)
-
-    # Get the document IDs as an RDD
-    docids = index_loader.docids()
-
-    # Get the JavaRDD of Lucene Documents as a Map (Document can't be serialized)
-    docs = index_loader.docs2map(docids, index)
-
-    # Convert to a PythonRDD
-    return _java2py(sc, docs)
 
 
 # Get an array of paragraphs (str)
@@ -41,30 +26,8 @@ def get_paragraphs(document):
     return paragraphs
 
 
-def run(doc):
-    paragraphs = get_paragraphs(json.loads(doc["raw"]))
-    result, words = task.run(paragraphs)
-    total_words.add(words)
-    return result
-
-
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--index", required=True, type=str, help="the index path")
-    parser.add_argument("--library", default="spacy", type=str, help="corenlp vs. nltk vs. spacy")
-    parser.add_argument("--task", default="ner", type=str, help="ner vs. pos vs. seg")
-    parser.add_argument("--num", default=-1, type=int, help="the number of documents use")
-
-    # Parse the args
-    args = parser.parse_args()
-
-    sc = SparkContext(appName="Spark NLP - {}:{}".format(args.library, args.task))
-
-    # Keep track of the # of words processed for words / sec calculation
-    total_words = sc.accumulator(0)
-
-    # Get the RDD of Lucene Documents
-    docs = get_docs(args.index)
+def get_task():
+    task = None
 
     # CoreNLP
     if args.library == "corenlp":
@@ -93,20 +56,47 @@ if __name__ == "__main__":
         if args.task == "seg":
             task = SpacySentenceSegmenter({})
 
+    return task
+
+
+def process(part):
+    results = []
+    task = get_task()
+
+    for doc in part:
+        result, tokens = task.run(get_paragraphs(json.loads(doc)))
+        results.append(result)
+        total_tokens.add(tokens)
+
+    return iter(results)
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--collection", required=True, type=str, help="the collection file")
+    parser.add_argument("--library", default="spacy", type=str, help="corenlp vs. nltk vs. spacy")
+    parser.add_argument("--task", default="ner", type=str, help="ner vs. pos vs. seg")
+    parser.add_argument("--sample", default=-1, type=float, help="the # of sample to take")
+
+    # Parse the args
+    args = parser.parse_args()
+
+    # Create the SparkContext
+    sc = SparkContext(appName="Spark NLP - {}:{}".format(args.library, args.task))
+
+    # Keep track of the # of tokens processed for tokens / sec calculation
+    total_tokens = sc.accumulator(0)
+
     start = time.time()
 
-    if args.num < 1:
-        docs.foreach(lambda doc: run(doc))
+    # The collection file as a RDD
+    rdd = sc.textFile(args.collection)
+
+    if args.sample > 0:
+        rdd.sample(False, args.sample).mapPartitions(process).foreach(lambda x: print(x))
     else:
-        for doc in docs.take(args.num):
-            print("\n###\n# Document ID: %s\n###\n" % doc["id"])
-            i = 0
-            for paragraph in run(doc):
-                print("# Paragraph {}:".format(i))
-                print(paragraph)
-                print()
-                i += 1
+        rdd.foreachPartition(process)
 
     total_time = time.time() - start
 
-    print("Took %.2f s @ %.2f words/s" % (total_time, (total_words.value / total_time)))
+    print("Took %.2f s @ %.2f words/s" % (total_time, (total_tokens.value / total_time)))

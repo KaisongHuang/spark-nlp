@@ -1,8 +1,3 @@
-Anserini-Spark
--
-
-At the moment, [`Anserini-Spark`](https://github.com/castorini/Anserini-Spark) needs to be built with version `0.3.1-SNAPSHOT` of [`Anserini`](https://github.com/castorini/Anserini). You will need to build `Anserini` such that it is available in your local `maven` repo and then build `Anserini-Spark`.
-
 Setup
 -
 

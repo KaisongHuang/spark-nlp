@@ -47,6 +47,8 @@ def get_task():
     #         return CoreNLPPartOfSpeechTagger(sc)
     #     if args.task == "seg":
     #         return CoreNLPSentenceSegmenter(sc)
+    #     if args.task == "dep":
+    #         return CoreNLPDependencyParsing(sc)
 
     # NLTK
     if args.library == "nltk":

@@ -1,3 +1,4 @@
+import os
 import spacy
 
 from ..task import Task
@@ -5,8 +6,10 @@ from ..task import Task
 
 class SpacyPartOfSpeechTagger(Task):
 
-    def __init__(self, config):
-        self.config = config
+    def __init__(self, gpu):
+        if gpu >= 0:
+            os.environ["CUDA_VISIBLE_DEVICES"] = str(gpu)
+            spacy.require_gpu()
         self.nlp = spacy.load("en")
 
     def run(self, data):

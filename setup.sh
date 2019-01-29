@@ -12,9 +12,6 @@ virtualenv -p /usr/bin/python3 venv
 # Source venv
 source venv/bin/activate
 
-# Update setuptools
-pip install -U pip setuptools
-
 # Install AllenNLP
 pip install -U allennlp
 
@@ -22,7 +19,10 @@ pip install -U allennlp
 pip install -U nltk
 
 # Install spaCy
-pip install -U spacy spacy[cuda92]
+pip install -U spacy
+
+# Install spaCy GPU support
+pip install -U spacy[cuda92]
 
 # Download spaCy English model
 python -m spacy download en

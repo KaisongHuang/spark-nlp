@@ -30,45 +30,42 @@ def get_paragraphs(document):
 
 
 def get_task():
-    task = None
 
     # AllenNLP
     if args.library == "allen":
         if args.task == "ner":
-            task = AllenNLPNamedEntityRecognition({})
+            return AllenNLPNamedEntityRecognition(args.gpu)
         if args.task == "pos":
-            task = AllenNLPPartOfSpeechTagger({})
+            return AllenNLPPartOfSpeechTagger(args.gpu)
         if args.task == "seg":
-            task = AllenNLPSentenceSegmenter({})
+            return AllenNLPSentenceSegmenter(args.gpu)
 
     # CoreNLP
     if args.library == "corenlp":
         if args.task == "ner":
-            task = CoreNLPNamedEntityRecognition({})
+            return CoreNLPNamedEntityRecognition({})
         if args.task == "pos":
-            task = CoreNLPPartOfSpeechTagger({})
+            return CoreNLPPartOfSpeechTagger({})
         if args.task == "seg":
-            task = CoreNLPSentenceSegmenter({})
+            return CoreNLPSentenceSegmenter({})
 
     # NLTK
     if args.library == "nltk":
         if args.task == "ner":
-            task = NLTKNamedEntityRecognition({})
+            return NLTKNamedEntityRecognition({})
         if args.task == "pos":
-            task = NLTKPartOfSpeechTagger({})
+            return NLTKPartOfSpeechTagger({})
         if args.task == "seg":
-            task = NLTKSentenceSegmenter({})
+            return NLTKSentenceSegmenter({})
 
     # spaCy
     if args.library == "spacy":
         if args.task == "ner":
-            task = SpacyNamedEntityRecognition({})
+            return SpacyNamedEntityRecognition(args.gpu)
         if args.task == "pos":
-            task = SpacyPartOfSpeechTagger({})
+            return SpacyPartOfSpeechTagger(args.gpu)
         if args.task == "seg":
-            task = SpacySentenceSegmenter({})
-
-    return task
+            return SpacySentenceSegmenter(args.gpu)
 
 
 def process(part):
@@ -87,6 +84,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--collection", required=True, type=str, help="the collection file")
     parser.add_argument("--library", default="spacy", type=str, help="allennlp vs. corenlp vs. nltk vs. spacy")
+    parser.add_argument("--gpu", default=-1, type=int, help="the GPU number to use (spacy or allennlp)")
     parser.add_argument("--task", default="ner", type=str, help="ner vs. pos vs. seg")
     parser.add_argument("--sample", default=-1, type=float, help="the # of sample to take")
 

@@ -43,11 +43,11 @@ def get_task():
     # CoreNLP
     if args.library == "corenlp":
         if args.task == "ner":
-            return CoreNLPNamedEntityRecognition({})
+            return CoreNLPNamedEntityRecognition(sc)
         if args.task == "pos":
-            return CoreNLPPartOfSpeechTagger({})
+            return CoreNLPPartOfSpeechTagger(sc)
         if args.task == "seg":
-            return CoreNLPSentenceSegmenter({})
+            return CoreNLPSentenceSegmenter(sc)
 
     # NLTK
     if args.library == "nltk":

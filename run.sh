@@ -1,7 +1,13 @@
 #!/bin/bash
 
+# The Stanford CoreNLP JAR
+CORENLP="/<somewhere>/stanford-corenlp-3.9.2.jar"
+
+# The Stanford CoreNLP English Model JAR
+COREMODEL="/<somewhere>/stanford-corenlp-3.9.2-models.jar"
+
 # The WashingtonPost collection
-COLLECTION="/home/ryan1clancy/ir/collections/WashingtonPost.v2/data/TREC_Washington_Post_collection.v2.jl"
+COLLECTION="/<somewhere>/WashingtonPost.v2/data/TREC_Washington_Post_collection.v2.jl"
 
 # The files to include in the PYPATH
 PY_FILES="libs.zip"
@@ -14,4 +20,4 @@ spark-submit \
         --master "local[8]" --executor-memory 4G --driver-memory 8G \
         --conf "spark.yarn.appMasterEnv.PYSPARK_PYTHON=$PYSPARK_PYTHON" \
         --archives "venv.zip#venv" \
-        --py-files $PY_FILES main.py --collection $COLLECTION --library spacy --task ner --sample 0.0001
+        --py-files $PY_FILES --jars --jars $CORENLP,$COREMODEL main.py --collection $COLLECTION --library spacy --task ner --sample 0.0001

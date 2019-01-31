@@ -32,7 +32,7 @@ def get_paragraphs(document):
 
 def get_task():
     # AllenNLP
-    if args.library == "allen":
+    if args.library == "allennlp":
         if args.task == "ner":
             return AllenNLPNamedEntityRecognition(args.gpu)
         if args.task == "pos":

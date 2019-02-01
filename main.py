@@ -13,6 +13,7 @@ from libs.corenlp.seg import CoreNLPSentenceSegmenter
 from libs.nltk.ner import NLTKNamedEntityRecognition
 from libs.nltk.pos import NLTKPartOfSpeechTagger
 from libs.nltk.seg import NLTKSentenceSegmenter
+from libs.spacy.dep import SpacyDependencyParser
 from libs.spacy.ner import SpacyNamedEntityRecognition
 from libs.spacy.pos import SpacyPartOfSpeechTagger
 from libs.spacy.seg import SpacySentenceSegmenter
@@ -31,7 +32,7 @@ def get_paragraphs(document):
 
 def get_task():
     # AllenNLP
-    if args.library == "allen":
+    if args.library == "allennlp":
         if args.task == "ner":
             return AllenNLPNamedEntityRecognition(args.gpu)
         if args.task == "pos":
@@ -47,6 +48,8 @@ def get_task():
     #         return CoreNLPPartOfSpeechTagger(sc)
     #     if args.task == "seg":
     #         return CoreNLPSentenceSegmenter(sc)
+    #     if args.task == "dep":
+    #         return CoreNLPDependencyParsing(sc)
 
     # NLTK
     if args.library == "nltk":
@@ -59,6 +62,8 @@ def get_task():
 
     # spaCy
     if args.library == "spacy":
+        if args.task == "dep":
+            return SpacyDependencyParser(args.gpu)
         if args.task == "ner":
             return SpacyNamedEntityRecognition(args.gpu)
         if args.task == "pos":

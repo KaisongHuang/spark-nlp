@@ -1,18 +1,16 @@
 from ..task import Task
-
+import stanfordnlp
 
 class CoreNLPSentenceSegmenter(Task):
 
-    def __init__(self, spark_context):
-        self.sc = spark_context
+    def __init__(self, config):
+        self.config = config
 
-        # Get an instance of the Properties
-        self.props = self.sc._jvm.java.util.Properties()
-        self.setProperty("annotators", "tokenize")
-        self.setProperty("ner.useSUTime", "false")
+        # Download english model
+        # stanfordnlp.download('en','venv/share',confirm_if_exists=True)
 
-        # Get an instance of the Pipeline
-        self.pipeline = self.sc._jvm.edu.stanford.nlp.pipeline.StanfordCoreNLP(self.props)
+        # Specify the local dir of the model and pipeline
+        self.nlp = stanfordnlp.Pipeline(lang='en', models_dir='venv/share', processors='tokenize')
 
     def run(self, data):
         paragraphs = []
@@ -20,13 +18,11 @@ class CoreNLPSentenceSegmenter(Task):
 
         for paragraph in data:
             sentences = []
+            doc = self.nlp(paragraph)
 
-            doc = self.sc._jvm.edu.stanford.nlp.pipeline.CoreDocument(paragraph)
-            self.pipeline.annotate(doc)
-
-            for sentence in doc.sentences():
-                sentences.append(str(sentence))
-                words += len(sentence)
+            for sentence in doc.sentences:
+                sentences.append(sentence.words)
+                words += len(sentence.words)
 
             paragraphs.append(sentences)
 

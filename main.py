@@ -44,14 +44,14 @@ def get_task():
         if args.task == "mc":
             return AllenNLPMachineComprehension(args.gpu, args.question)
 
-    # # CoreNLP
-    # if args.library == "corenlp":
+    # CoreNLP
+    if args.library == "corenlp":
     #     if args.task == "ner":
     #         return CoreNLPNamedEntityRecognition(sc)
     #     if args.task == "pos":
     #         return CoreNLPPartOfSpeechTagger(sc)
-    #     if args.task == "seg":
-    #         return CoreNLPSentenceSegmenter(sc)
+        if args.task == "seg":
+            return CoreNLPSentenceSegmenter({})
     #     if args.task == "dep":
     #         return CoreNLPDependencyParsing(sc)
 

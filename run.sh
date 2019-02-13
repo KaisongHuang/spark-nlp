@@ -1,10 +1,10 @@
 #!/bin/bash
 
 # The Stanford CoreNLP JAR
-CORENLP="/<somewhere>/stanford-corenlp-3.9.2.jar"
+# CORENLP="/<somewhere>/stanford-corenlp-3.9.2.jar"
 
 # The Stanford CoreNLP English Model JAR
-COREMODEL="/<somewhere>/stanford-corenlp-3.9.2-models.jar"
+# COREMODEL="/<somewhere>/stanford-corenlp-3.9.2-models.jar"
 
 # The WashingtonPost collection
 COLLECTION="/home/ryan1clancy/ir/collections/WashingtonPost.v2/data/TREC_Washington_Post_collection.v2.jl"

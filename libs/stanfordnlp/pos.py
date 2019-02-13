@@ -1,7 +1,7 @@
 from ..task import Task
 
 
-class CoreNLPPartOfSpeechTagger(Task):
+class StanfordNLPPartOfSpeechTagger(Task):
 
     def __init__(self, spark_context):
         self.sc = spark_context

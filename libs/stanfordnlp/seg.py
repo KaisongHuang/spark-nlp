@@ -1,7 +1,7 @@
 from ..task import Task
 import stanfordnlp
 
-class CoreNLPSentenceSegmenter(Task):
+class StanfordNLPSentenceSegmenter(Task):
 
     def __init__(self, config):
         self.config = config

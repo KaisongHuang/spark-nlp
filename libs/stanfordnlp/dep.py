@@ -1,6 +1,6 @@
 from ..task import Task
 
-class CoreNLPDependencyParsing(Task):
+class StanfordNLPDependencyParsing(Task):
 
     def __init__(self, spark_context):
         self.sc = spark_context

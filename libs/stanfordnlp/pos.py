@@ -1,14 +1,14 @@
 from ..task import Task
 
 
-class CoreNLPSentenceSegmenter(Task):
+class StanfordNLPPartOfSpeechTagger(Task):
 
     def __init__(self, spark_context):
         self.sc = spark_context
 
         # Get an instance of the Properties
         self.props = self.sc._jvm.java.util.Properties()
-        self.setProperty("annotators", "tokenize")
+        self.setProperty("annotators", "tokenize,ssplit")
         self.setProperty("ner.useSUTime", "false")
 
         # Get an instance of the Pipeline
@@ -25,9 +25,10 @@ class CoreNLPSentenceSegmenter(Task):
             self.pipeline.annotate(doc)
 
             for sentence in doc.sentences():
-                sentences.append(str(sentence))
-                words += len(sentence)
+                tokens = sentence.tokens()
 
-            paragraphs.append(sentences)
+                for token in tokens:
+                    sentences.append(" ".join("{}[{}]".format(token, token.tag())))
+                words += len(tokens)
 
         return paragraphs, words

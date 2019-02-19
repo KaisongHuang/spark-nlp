@@ -1,7 +1,7 @@
 from ..task import Task
 
 
-class CoreNLPNamedEntityRecognition(Task):
+class StanfordNLPNamedEntityRecognition(Task):
 
     def __init__(self, spark_context):
         self.sc = spark_context

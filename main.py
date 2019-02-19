@@ -8,10 +8,10 @@ from libs.allen.mc import AllenNLPMachineComprehension
 from libs.allen.ner import AllenNLPNamedEntityRecognition
 from libs.allen.pos import AllenNLPPartOfSpeechTagger
 from libs.allen.dep import AllenNLPDependencyParsing
-from libs.corenlp.ner import CoreNLPNamedEntityRecognition
-from libs.corenlp.pos import CoreNLPPartOfSpeechTagger
-from libs.corenlp.seg import CoreNLPSentenceSegmenter
-from libs.corenlp.dep import CoreNLPDependencyParsing
+from libs.stanfordnlp.ner import StanfordNLPNamedEntityRecognition
+from libs.stanfordnlp.pos import StanfordNLPPartOfSpeechTagger
+from libs.stanfordnlp.seg import StanfordNLPSentenceSegmenter
+from libs.stanfordnlp.dep import StanfordNLPDependencyParsing
 from libs.nltk.ner import NLTKNamedEntityRecognition
 from libs.nltk.pos import NLTKPartOfSpeechTagger
 from libs.nltk.seg import NLTKSentenceSegmenter
@@ -44,16 +44,16 @@ def get_task():
         if args.task == "mc":
             return AllenNLPMachineComprehension(args.gpu, args.question)
 
-    # # CoreNLP
-    # if args.library == "corenlp":
+    # CoreNLP
+    if args.library == "stanfordnlp":
     #     if args.task == "ner":
-    #         return CoreNLPNamedEntityRecognition(sc)
+    #         return StanfordNLPNamedEntityRecognition(sc)
     #     if args.task == "pos":
-    #         return CoreNLPPartOfSpeechTagger(sc)
-    #     if args.task == "seg":
-    #         return CoreNLPSentenceSegmenter(sc)
+    #         return StanfordNLPPartOfSpeechTagger(sc)
+        if args.task == "seg":
+            return StanfordNLPSentenceSegmenter({})
     #     if args.task == "dep":
-    #         return CoreNLPDependencyParsing(sc)
+    #         return StanfordNLPDependencyParsing(sc)
 
     # NLTK
     if args.library == "nltk":
@@ -91,7 +91,7 @@ def process(part):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--collection", required=True, type=str, help="the collection file")
-    parser.add_argument("--library", default="spacy", type=str, help="allennlp vs. corenlp vs. nltk vs. spacy")
+    parser.add_argument("--library", default="spacy", type=str, help="allennlp vs. stanfordnlp vs. nltk vs. spacy")
     parser.add_argument("--gpu", default=-1, type=int, help="the GPU number to use (spacy or allennlp)")
     parser.add_argument("--task", default="ner", type=str, help="ner vs. pos vs. seg")
     parser.add_argument("--sample", default=-1, type=float, help="the % of sample to take")

@@ -1,34 +1,27 @@
 from ..task import Task
-
+import torch
+torch.backends.cudnn.enabled = False
+import stanfordnlp
+import os
 
 class StanfordNLPPartOfSpeechTagger(Task):
 
-    def __init__(self, spark_context):
-        self.sc = spark_context
+    def __init__(self, gpu):
+        use_gpu = False
+        if gpu >= 0:
+            os.environ["CUDA_VISIBLE_DEVICES"] = str(gpu)
+            use_gpu = True
 
-        # Get an instance of the Properties
-        self.props = self.sc._jvm.java.util.Properties()
-        self.setProperty("annotators", "tokenize,ssplit")
-        self.setProperty("ner.useSUTime", "false")
+        # Download english model
+        # stanfordnlp.download('en','venv/share',confirm_if_exists=True)
 
-        # Get an instance of the Pipeline
-        self.pipeline = self.sc._jvm.edu.stanford.nlp.pipeline.StanfordCoreNLP(self.props)
+        # Specify the local dir of the model and pipeline
+        self.nlp = stanfordnlp.Pipeline(lang='en', models_dir='stanfordnlp_resources', processors='tokenize,pos', use_gpu=use_gpu)
 
     def run(self, data):
         paragraphs = []
         words = 0
 
-        for paragraph in data:
-            sentences = []
-
-            doc = self.sc._jvm.edu.stanford.nlp.pipeline.CoreDocument(paragraph)
-            self.pipeline.annotate(doc)
-
-            for sentence in doc.sentences():
-                tokens = sentence.tokens()
-
-                for token in tokens:
-                    sentences.append(" ".join("{}[{}]".format(token, token.tag())))
-                words += len(tokens)
+        # TODO
 
         return paragraphs, words

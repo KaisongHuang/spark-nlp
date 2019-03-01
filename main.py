@@ -44,14 +44,14 @@ def get_task():
         if args.task == "mc":
             return AllenNLPMachineComprehension(args.gpu, args.question)
 
-    # CoreNLP
-    if args.library == "stanfordnlp":
+    # StanfordNLP
+    # if args.library == "stanfordnlp":
     #     if args.task == "ner":
     #         return StanfordNLPNamedEntityRecognition(sc)
     #     if args.task == "pos":
-    #         return StanfordNLPPartOfSpeechTagger(sc)
-        if args.task == "seg":
-            return StanfordNLPSentenceSegmenter({})
+    #         return StanfordNLPPartOfSpeechTagger({})
+    #     if args.task == "seg":
+    #         return StanfordNLPSentenceSegmenter({})
     #     if args.task == "dep":
     #         return StanfordNLPDependencyParsing(sc)
 
@@ -78,10 +78,17 @@ def get_task():
 
 def process(part):
     results = []
-    task = get_task()
+
+    if args.library != "stanfordnlp":
+        task = get_task()
+    else:
+        task = _task
 
     for doc in part:
-        result, tokens = task.run(get_paragraphs(json.loads(doc)))
+        if args.library != "stanfordnlp":
+            result, tokens = task.run(get_paragraphs(json.loads(doc)))
+        else:
+            result, tokens = task.value.run(get_paragraphs(json.loads(doc)))
         results.append(result)
         total_tokens.add(tokens)
 
@@ -110,6 +117,14 @@ if __name__ == "__main__":
 
     # The collection file as a RDD
     rdd = sc.textFile(args.collection)
+
+    # Initialize a StanfordNLP task and broadcast it
+    if args.library == "stanfordnlp":
+        if args.task == "seg":
+            task = StanfordNLPSentenceSegmenter(args.gpu)
+        # if args.task == "pos":
+            # task = StanfordNLPPartOfSpeechTagger(args.gpu)
+    _task = sc.broadcast(task)
 
     if args.sample > 0:
         rdd.sample(False, args.sample).mapPartitions(process).foreach(lambda x: print(x))

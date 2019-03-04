@@ -22,6 +22,9 @@ pip install -U spacy
 # Install spaCy GPU support
 pip install -U spacy[cuda92]
 
+# Install stanfordnlp
+pip install -U stanfordnlp
+
 # Download spaCy English model
 python -m spacy download en
 

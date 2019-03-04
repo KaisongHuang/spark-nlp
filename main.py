@@ -122,8 +122,8 @@ if __name__ == "__main__":
     if args.library == "stanfordnlp":
         if args.task == "seg":
             task = StanfordNLPSentenceSegmenter(args.gpu)
-        # if args.task == "pos":
-            # task = StanfordNLPPartOfSpeechTagger(args.gpu)
+        if args.task == "pos":
+            task = StanfordNLPPartOfSpeechTagger(args.gpu)
     _task = sc.broadcast(task)
 
     if args.sample > 0:

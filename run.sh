@@ -7,7 +7,7 @@
 # COREMODEL="/<somewhere>/stanford-corenlp-3.9.2-models.jar"
 
 # The WashingtonPost collection
-COLLECTION="/home/ryan1clancy/ir/collections/WashingtonPost.v2/data/TREC_Washington_Post_collection.v2.jl"
+COLLECTION="/home/kaisong1huang/TREC_Washington_Post_collection.v2.jl"
 
 # The files to include in the PYPATH
 PY_FILES="libs.zip"

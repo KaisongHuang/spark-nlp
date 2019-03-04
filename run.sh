@@ -17,7 +17,7 @@ export PYSPARK_DRIVER_PYTHON="venv/bin/python"
 
 # Run the code...
 spark-submit \
-        --master "local[8]" --executor-memory 4G --driver-memory 8G \
+        --master "local[2]" --executor-memory 4G --driver-memory 8G \
         --conf "spark.yarn.appMasterEnv.PYSPARK_PYTHON=$PYSPARK_PYTHON" \
         --archives "venv.zip#venv" \
         --py-files $PY_FILES main.py --collection $COLLECTION --library spacy --task pos --sample 0.0001 --gpu 1

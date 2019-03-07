@@ -37,5 +37,4 @@ class SpacyNamedEntityRecognition(Task):
         return results, words
 
     def get_entities(self, sent):
-        return [{e.text: (e.label_, e.start_char - e.sent.start_char, e.end_char - e.sent.start_char)} for e in
-                sent.ents]
+        return [{e.text: (e.label_, e.start_char - e.sent.start_char, e.end_char - e.sent.start_char)} for e in sent.ents]

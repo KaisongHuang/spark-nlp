@@ -1,6 +1,7 @@
-from ..task import Task
 from allennlp.predictors.predictor import Predictor
 from spacy import load
+
+from ..task import Task
 
 
 class AllenNLPDependencyParsing(Task):
@@ -29,10 +30,7 @@ class AllenNLPDependencyParsing(Task):
 
             for prediction in predictions:
                 words += len(prediction["words"])
-                par.append({
-                    "text": prediction["words"],
-                    "dep": prediction["predicted_dependencies"]
-                })
+                par.append(prediction)
 
             results.append(par)
 

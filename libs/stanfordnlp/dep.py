@@ -1,41 +1,31 @@
+import os
+
+import stanfordnlp
+import torch
+
 from ..task import Task
 
-class StanfordNLPDependencyParsing(Task):
+torch.backends.cudnn.enabled = False
 
-    def __init__(self, spark_context):
-        self.sc = spark_context
 
-        # Get an instance of the Properties
-        self.props = self.sc._jvm.java.util.Properties()
-        self.setProperty("annotators", "tokenize,ssplit,pos")
-        self.setProperty("ner.useSUTime", "false")
+class StanfordNLPPartOfSpeechTagger(Task):
 
-        # Get an instance of the Pipeline
-        self.pipeline = self.sc._jvm.edu.stanford.nlp.pipeline.StanfordCoreNLP(self.props)
+    def __init__(self, gpu):
+        use_gpu = False
+        if gpu >= 0:
+            os.environ["CUDA_VISIBLE_DEVICES"] = str(gpu)
+            use_gpu = True
+
+        # Download english model
+        stanfordnlp.download('en', 'venv/share', confirm_if_exists=True)
+
+        # Specify the local dir of the model and pipeline
+        self.nlp = stanfordnlp.Pipeline(lang='en', models_dir='venv/share', processors='tokenize,pos', use_gpu=use_gpu)
 
     def run(self, data):
-        results = []
+        paragraphs = []
         words = 0
 
-        # For each parsed doc...
-        for paragraph in data:
+        # TODO
 
-            # Keep track of sentences in the paragraph
-            par = []
-
-            doc = self.sc._jvm.edu.stanford.nlp.pipeline.CoreDocument(paragraph)
-            self.pipeline.annotate(doc)
-
-            # For each sentence in the paragraph, parse the dependency
-            for sentence in doc.sentences():
-                words += len(sentence)
-
-                par.append({
-                    "text": sentence,
-                    "dependency": sentence.dependencyParse()
-                })
-
-            # Add the paragraph to our results
-            results.append(par)
-
-        return results, words
+        return paragraphs, words

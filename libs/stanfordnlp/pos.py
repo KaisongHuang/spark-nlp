@@ -29,7 +29,6 @@ class StanfordNLPPartOfSpeechTagger(Task):
         for paragraph in data:
             sentences = []
             doc = self.nlp(paragraph)
-            # print("loop1")
             for sentence in doc.sentences:
                 token_list = []
                 tokens = sentence.tokens

@@ -1,6 +1,7 @@
-from ..task import Task
 from allennlp.predictors.predictor import Predictor
 from spacy import load
+
+from ..task import Task
 
 
 class AllenNLPNamedEntityRecognition(Task):
@@ -29,10 +30,7 @@ class AllenNLPNamedEntityRecognition(Task):
 
             for prediction in predictions:
                 words += len(prediction["words"])
-                par.append({
-                    "text": prediction["words"],
-                    "entities": prediction["tags"]
-                })
+                par.append(prediction)
 
             results.append(par)
 

@@ -19,7 +19,7 @@ class NLTKNamedEntityRecognition(Task):
                 tokens = nltk.word_tokenize(sentence)
                 tagged = nltk.pos_tag(tokens)
                 chunked = nltk.ne_chunk(tagged)
-                sentences.append(nltk.tree2conlltags(chunked))
+                sentences.append(chunked)
                 words += len(tokens)
             paragraphs.append(sentences)
         return paragraphs, words

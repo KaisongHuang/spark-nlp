@@ -1,8 +1,12 @@
-from ..task import Task
-import torch
-torch.backends.cudnn.enabled = False
-import stanfordnlp
 import os
+
+import stanfordnlp
+import torch
+
+from ..task import Task
+
+torch.backends.cudnn.enabled = False
+
 
 class StanfordNLPPartOfSpeechTagger(Task):
 
@@ -13,10 +17,10 @@ class StanfordNLPPartOfSpeechTagger(Task):
             use_gpu = True
 
         # Download english model
-        # stanfordnlp.download('en','venv/share',confirm_if_exists=True)
+        stanfordnlp.download('en', 'venv/share', confirm_if_exists=True)
 
         # Specify the local dir of the model and pipeline
-        self.nlp = stanfordnlp.Pipeline(lang='en', models_dir='stanfordnlp_resources', processors='tokenize,pos', use_gpu=use_gpu)
+        self.nlp = stanfordnlp.Pipeline(lang='en', models_dir='venv/share', processors='tokenize,pos', use_gpu=use_gpu)
 
     def run(self, data):
         paragraphs = []

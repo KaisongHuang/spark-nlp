@@ -17,7 +17,7 @@ class NLTKPartOfSpeechTagger(Task):
             for sentence in nltk.sent_tokenize(paragraph):
                 tokens = nltk.word_tokenize(sentence)
                 tagged = nltk.pos_tag(tokens)
-                sentences.append(" ".join("{}[{}]".format(t[0], t[1]) for t in tagged))
+                sentences.append(tagged)
                 words += len(tokens)
             paragraphs.append(sentences)
         return paragraphs, words

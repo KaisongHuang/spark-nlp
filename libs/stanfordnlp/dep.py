@@ -8,7 +8,7 @@ from ..task import Task
 torch.backends.cudnn.enabled = False
 
 
-class StanfordNLPPartOfSpeechTagger(Task):
+class StanfordNLPDependencyParsing(Task):
 
     def __init__(self, gpu):
         use_gpu = False

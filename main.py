@@ -4,21 +4,16 @@ import time
 
 from pyspark import SparkContext
 
-from libs.allen.mc import AllenNLPMachineComprehension
 from libs.allen.ner import AllenNLPNamedEntityRecognition
 from libs.allen.pos import AllenNLPPartOfSpeechTagger
 from libs.allen.dep import AllenNLPDependencyParsing
-from libs.stanfordnlp.ner import StanfordNLPNamedEntityRecognition
 from libs.stanfordnlp.pos import StanfordNLPPartOfSpeechTagger
-from libs.stanfordnlp.seg import StanfordNLPSentenceSegmenter
 from libs.stanfordnlp.dep import StanfordNLPDependencyParsing
 from libs.nltk.ner import NLTKNamedEntityRecognition
 from libs.nltk.pos import NLTKPartOfSpeechTagger
-from libs.nltk.seg import NLTKSentenceSegmenter
 from libs.spacy.dep import SpacyDependencyParser
 from libs.spacy.ner import SpacyNamedEntityRecognition
 from libs.spacy.pos import SpacyPartOfSpeechTagger
-from libs.spacy.seg import SpacySentenceSegmenter
 
 
 # Get an array of paragraphs (str)
@@ -41,19 +36,6 @@ def get_task():
             return AllenNLPPartOfSpeechTagger(args.gpu)
         if args.task == "dep":
             return AllenNLPDependencyParsing(args.gpu)
-        if args.task == "mc":
-            return AllenNLPMachineComprehension(args.gpu, args.question)
-
-    # StanfordNLP
-    # if args.library == "stanfordnlp":
-    #     if args.task == "ner":
-    #         return StanfordNLPNamedEntityRecognition(sc)
-    #     if args.task == "pos":
-    #         return StanfordNLPPartOfSpeechTagger({})
-    #     if args.task == "seg":
-    #         return StanfordNLPSentenceSegmenter({})
-    #     if args.task == "dep":
-    #         return StanfordNLPDependencyParsing(sc)
 
     # NLTK
     if args.library == "nltk":
@@ -61,8 +43,6 @@ def get_task():
             return NLTKNamedEntityRecognition({})
         if args.task == "pos":
             return NLTKPartOfSpeechTagger({})
-        if args.task == "seg":
-            return NLTKSentenceSegmenter({})
 
     # spaCy
     if args.library == "spacy":
@@ -72,8 +52,6 @@ def get_task():
             return SpacyNamedEntityRecognition(args.gpu)
         if args.task == "pos":
             return SpacyPartOfSpeechTagger(args.gpu)
-        if args.task == "seg":
-            return SpacySentenceSegmenter(args.gpu)
 
 
 def process(part):
@@ -120,10 +98,10 @@ if __name__ == "__main__":
 
     # Initialize a StanfordNLP task and broadcast it
     if args.library == "stanfordnlp":
-        if args.task == "seg":
-            task = StanfordNLPSentenceSegmenter(args.gpu)
         if args.task == "pos":
             task = StanfordNLPPartOfSpeechTagger(args.gpu)
+        if args.task == "dep":
+            task = StanfordNLPDependencyParsing(args.gpu)
     _task = sc.broadcast(task)
 
     if args.sample > 0:

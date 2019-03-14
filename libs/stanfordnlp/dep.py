@@ -26,6 +26,13 @@ class StanfordNLPDependencyParsing(Task):
         paragraphs = []
         words = 0
 
-        # TODO
+        for paragraph in data:
+            sentences = []
+            doc = self.nlp(paragraph)
+            for sentence in doc.sentences:
+                deps = sentence.dependencies
+                sentences.append("".join(str(dep) for dep in deps))
+                words += len(sentence.dependencies)
+            paragraphs.append(sentences)
 
         return paragraphs, words

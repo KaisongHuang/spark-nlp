@@ -26,6 +26,18 @@ class StanfordNLPPartOfSpeechTagger(Task):
         paragraphs = []
         words = 0
 
-        # TODO
+        for paragraph in data:
+            sentences = []
+            doc = self.nlp(paragraph)
+            for sentence in doc.sentences:
+                token_list = []
+                tokens = sentence.tokens
+                for token in tokens:
+                    pos = token.words[0].upos
+                    word = token.words[0].text
+                    token_list.append("{}[{}]".format(word, pos))
+                sentences.append(" ".join(str(value) for value in token_list))
+                words += len(sentence.tokens)
+            paragraphs.append(sentences)
 
         return paragraphs, words

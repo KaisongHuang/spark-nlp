@@ -9,8 +9,7 @@ class AllenNLPNamedEntityRecognition(Task):
     def __init__(self, gpu):
         self.gpu = gpu
         self.nlp = load("en", disable=["tagger", "ner"])
-        self.predictor = Predictor.from_path(
-            "https://s3-us-west-2.amazonaws.com/allennlp/models/ner-model-2018.12.18.tar.gz")
+        self.predictor = Predictor.from_path("https://s3-us-west-2.amazonaws.com/allennlp/models/fine-grained-ner-model-elmo-2018.12.21.tar.gz")
 
     def run(self, data):
         results = []

@@ -102,7 +102,7 @@ if __name__ == "__main__":
             task = StanfordNLPPartOfSpeechTagger(args.gpu)
         if args.task == "dep":
             task = StanfordNLPDependencyParsing(args.gpu)
-    _task = sc.broadcast(task)
+        _task = sc.broadcast(task)
 
     if args.sample > 0:
         rdd.sample(False, args.sample).mapPartitions(process).foreach(lambda x: print(x))

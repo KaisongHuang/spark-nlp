@@ -10,7 +10,7 @@ class AllenNLPNamedEntityRecognition(Task):
         self.gpu = gpu
         self.nlp = load("en", disable=["tagger", "ner"])
         self.predictor = Predictor.from_path(
-            "https://s3-us-west-2.amazonaws.com/allennlp/models/ner-model-2018.04.26.tar.gz")
+            "https://s3-us-west-2.amazonaws.com/allennlp/models/ner-model-2018.12.18.tar.gz")
 
     def run(self, data):
         results = []

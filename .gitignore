@@ -3,3 +3,4 @@ venv/
 git/Anserini-Spark/
 .vscode/settings.json
 run.sh
+output_format.txt

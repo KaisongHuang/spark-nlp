@@ -15,6 +15,8 @@ from libs.spacy.dep import SpacyDependencyParser
 from libs.spacy.ner import SpacyNamedEntityRecognition
 from libs.spacy.pos import SpacyPartOfSpeechTagger
 
+from htmltextparser import HTMLTextParser
+
 
 # Get an array of paragraphs (str)
 def get_paragraphs(document):
@@ -23,7 +25,11 @@ def get_paragraphs(document):
         for content in document["contents"]:
             if (content is not None) and ("content" in content) and ("type" in content) and ("subtype" in content):
                 if (content["type"] == "sanitized_html") and (content["subtype"] == "paragraph"):
-                    paragraphs.append(content["content"])
+                    parser = HTMLTextParser()
+                    parser.feed(str(content["content"]))
+                    paragraph = parser.get_text()
+                    paragraphs.append(paragraph)
+    # print(paragraphs)
     return paragraphs
 
 
@@ -80,7 +86,6 @@ if __name__ == "__main__":
     parser.add_argument("--gpu", default=-1, type=int, help="the GPU number to use (spacy or allennlp)")
     parser.add_argument("--task", default="ner", type=str, help="ner vs. pos vs. seg")
     parser.add_argument("--sample", default=-1, type=float, help="the % of sample to take")
-    parser.add_argument("--question", default="", type=str, help="find answer from docs")
 
     # Parse the args
     args = parser.parse_args()

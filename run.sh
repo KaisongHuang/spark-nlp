@@ -1,9 +1,9 @@
 #!/bin/bash
 
 # Required for CUDA
-export CUDA_HOME=/usr/local/cuda-9.2
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/cuda-9.2/lib64:/usr/local/cudnn7/lib64
-export PATH=/usr/local/cudnn7/include:/usr/local/cuda-9.2/bin/:$PATH
+# export CUDA_HOME=/usr/local/cuda-9.2
+# export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/cuda-9.2/lib64:/usr/local/cudnn7/lib64
+# export PATH=/usr/local/cudnn7/include:/usr/local/cuda-9.2/bin/:$PATH
 
 # The WashingtonPost collection
 # COLLECTION="/home/kaisong1huang/TREC_Washington_Post_collection.v2.jl"

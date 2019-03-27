@@ -17,7 +17,7 @@ class StanfordNLPPartOfSpeechTagger(Task):
             use_gpu = True
 
         # Download english model
-        stanfordnlp.download('en', 'venv/share', confirm_if_exists=True)
+        # stanfordnlp.download('en', 'venv/share', confirm_if_exists=True)
 
         # Specify the local dir of the model and pipeline
         self.nlp = stanfordnlp.Pipeline(lang='en', models_dir='venv/share', processors='tokenize,pos', use_gpu=use_gpu)

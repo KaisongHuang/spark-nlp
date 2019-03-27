@@ -1,37 +1,36 @@
 from allennlp.predictors.predictor import Predictor
-from spacy import load
+from allennlp.models.archival import load_archive
+import spacy
+from spacy.lang.en import English
 
 from ..task import Task
 
 
 class AllenNLPPartOfSpeechTagger(Task):
-
     def __init__(self, gpu):
-        self.gpu = gpu
-        self.nlp = load("en", disable=["tagger", "ner"])
-        self.predictor = Predictor.from_path(
-            "https://s3-us-west-2.amazonaws.com/allennlp/models/biaffine-dependency-parser-ptb-2018.08.23.tar.gz")
-
+        self.nlp = English()
+        self.sentencizer = self.nlp.create_pipe("sentencizer")
+        self.nlp.add_pipe(self.sentencizer)
+        archive = load_archive("https://s3-us-west-2.amazonaws.com/allennlp/models/biaffine-dependency-parser-ptb-2018.08.23.tar.gz", cuda_device = int(gpu))
+        self.predictor = Predictor.from_archive(archive)
+    
+    # The parameter data here is an article which is a list of paragraphs
     def run(self, data):
         results = []
         words = 0
 
-        # For each parsed doc...
-        for doc in self.nlp.pipe(data):
-
+        for paragraph in data:
             par = []
+            
+            sent_pos = []
+            doc = self.nlp(paragraph)
+            for sentence in doc.sents:
+                prediction = self.predictor.predict(str(sentence))
+                sent_pos.append(prediction['words'])
+                sent_pos.append(prediction['pos'])
+                words += len(prediction['words'])
 
-            batch = [{"sentence": sentence.text} for sentence in doc.sents]
-
-            try:
-                predictions = self.predictor.predict_batch_json(batch)
-            except:
-                continue
-
-            for prediction in predictions:
-                words += len(prediction["words"])
-                par.append(prediction)
-
+            par.append(sent_pos)
             results.append(par)
 
         return results, words

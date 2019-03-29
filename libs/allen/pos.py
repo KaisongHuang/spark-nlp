@@ -22,15 +22,21 @@ class AllenNLPPartOfSpeechTagger(Task):
         for paragraph in data:
             par = []
             
-            sent_pos = []
             doc = self.nlp(paragraph)
             for sentence in doc.sents:
+                sent = []
                 prediction = self.predictor.predict(str(sentence))
-                sent_pos.append(prediction['words'])
-                sent_pos.append(prediction['pos'])
-                words += len(prediction['words'])
-
-            par.append(sent_pos)
+                prd_words = prediction['words']
+                prd_pos = prediction['pos']
+                length = len(prd_words)
+                
+                for index in range(length):
+                    pair = (prd_words[index], prd_pos[index])
+                    sent.append(pair)
+                
+                words += length
+                par.append(sent)
+            
             results.append(par)
 
         return results, words

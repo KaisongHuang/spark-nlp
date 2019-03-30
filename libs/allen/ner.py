@@ -1,36 +1,42 @@
 from allennlp.predictors.predictor import Predictor
-from spacy import load
-
+from allennlp.models.archival import load_archive
+from spacy.lang.en import English
 from ..task import Task
+import torch
+torch.backends.cudnn.enabled = False
 
 
 class AllenNLPNamedEntityRecognition(Task):
-
     def __init__(self, gpu):
-        self.gpu = gpu
-        self.nlp = load("en", disable=["tagger", "ner"])
-        self.predictor = Predictor.from_path("https://s3-us-west-2.amazonaws.com/allennlp/models/fine-grained-ner-model-elmo-2018.12.21.tar.gz")
+        self.nlp = English()
+        self.sentencizer = self.nlp.create_pipe("sentencizer")
+        self.nlp.add_pipe(self.sentencizer)
+        archive = load_archive("https://s3-us-west-2.amazonaws.com/allennlp/models/fine-grained-ner-model-elmo-2018.12.21.tar.gz", cuda_device = int(gpu))
+        self.predictor = Predictor.from_archive(archive)
+
 
     def run(self, data):
         results = []
         words = 0
 
-        # For each parsed doc...
-        for doc in self.nlp.pipe(data):
-
+        for paragraph in data:
             par = []
-
-            batch = [{"sentence": sentence.text} for sentence in doc.sents]
-
-            try:
-                predictions = self.predictor.predict_batch_json(batch)
-            except:
-                continue
-
-            for prediction in predictions:
-                words += len(prediction["words"])
-                par.append(prediction)
-
+            
+            doc = self.nlp(paragraph)
+            for sentence in doc.sents:
+                sent = []
+                prediction = self.predictor.predict(str(sentence))
+                prd_words = prediction['words']
+                prd_pos = prediction['tags']
+                length = len(prd_words)
+                
+                for index in range(length):
+                    pair = (prd_words[index], prd_pos[index])
+                    sent.append(pair)
+                
+                words += length
+                par.append(sent)
+            
             results.append(par)
 
         return results, words

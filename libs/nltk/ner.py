@@ -23,6 +23,12 @@ class NLTKNamedEntityRecognition(Task):
                 tags = nltk.pos_tag(tokens)
                 chunks = nltk.ne_chunk(tags)
                 for chunk in chunks:
+                    # BILOU Scheme
+                    # B - 'beginning'
+                    # I - 'inside'
+                    # L - 'last'
+                    # O - 'outside'
+                    # U - 'unit
                     if hasattr(chunk, 'label'):
                         ner_tag = chunk.label()
                         length = len(chunk)

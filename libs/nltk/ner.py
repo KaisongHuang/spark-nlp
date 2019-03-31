@@ -18,10 +18,33 @@ class NLTKNamedEntityRecognition(Task):
         for paragraph in data:
             sentences = []
             for sentence in nltk.sent_tokenize(paragraph):
+                sent = []
                 tokens = nltk.word_tokenize(sentence)
-                tagged = nltk.pos_tag(tokens)
-                chunked = nltk.ne_chunk(tagged)
-                sentences.append(chunked)
+                tags = nltk.pos_tag(tokens)
+                chunks = nltk.ne_chunk(tags)
+                for chunk in chunks:
+                    # BILOU Scheme
+                    # B - 'beginning'
+                    # I - 'inside'
+                    # L - 'last'
+                    # O - 'outside'
+                    # U - 'unit
+                    if hasattr(chunk, 'label'):
+                        ner_tag = chunk.label()
+                        length = len(chunk)
+                        for i in range(length):
+                            if length == 1:
+                                sent.append((chunk[i][0], 'U-' + ner_tag))
+                            elif i == 0:
+                                sent.append((chunk[i][0], 'B-' + ner_tag))
+                            elif i == length - 1:
+                                sent.append((chunk[i][0], 'L-' + ner_tag))
+                            else:
+                                sent.append((chunk[i][0], 'I-' + ner_tag))
+                            # sent.append((c[0] ,ner_tag))
+                    else:
+                        sent.append((chunk[0], 'O'))
+                sentences.append(sent)
                 words += len(tokens)
             paragraphs.append(sentences)
         return paragraphs, words

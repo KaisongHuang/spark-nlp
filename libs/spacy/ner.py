@@ -1,7 +1,6 @@
 import os
-
 import spacy
-
+from spacy.lang.en import English
 from ..task import Task
 
 
@@ -11,30 +10,39 @@ class SpacyNamedEntityRecognition(Task):
         if gpu >= 0:
             os.environ["CUDA_VISIBLE_DEVICES"] = str(gpu)
             spacy.require_gpu()
+        self.nlp_sent = English()
+        self.sentencizer = self.nlp_sent.create_pipe("sentencizer")
+        self.nlp_sent.add_pipe(self.sentencizer)
         self.nlp = spacy.load("en")
 
     def run(self, data):
         results = []
         words = 0
 
-        # For each parsed doc...
-        for doc in self.nlp.pipe(data):
-
+        for paragraph in data:
             # Keep track of sentences in the paragraph
             par = []
 
             # For each sentence in the paragraph, fetch the entities
+            doc = self.nlp_sent(paragraph)
             for sentence in doc.sents:
-                words += len(sentence)
-                par.append({
-                    "text": sentence,
-                    "entities": self.get_entities(sentence)
-                })
+                sent = []
+                tokens = self.nlp(str(sentence))
+                for token in tokens:
+                    if token.text == ' ':
+                        continue
 
-            # Add the paragraph to our results
+                    # IOB Scheme (token.ent_iob_)
+                    # I - Token is inside an entity
+                    # O - Token is outside an entity
+                    # B - Token is the beginning of an entity
+                    if token.ent_iob_ == 'O':
+                        sent.append((token.text, token.ent_iob_ + token.ent_type_))
+                    else:
+                        sent.append((token.text, token.ent_iob_ + '-' + token.ent_type_))
+
+                par.append(sent)
+                words += len(tokens)
             results.append(par)
 
         return results, words
-
-    def get_entities(self, sent):
-        return [{e.text: (e.label_, e.start_char - e.sent.start_char, e.end_char - e.sent.start_char)} for e in sent.ents]

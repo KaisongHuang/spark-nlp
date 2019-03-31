@@ -18,6 +18,14 @@ from libs.spacy.pos import SpacyPartOfSpeechTagger
 from htmltextparser import HTMLTextParser
 
 
+# Get the document's id
+def get_docid(document):
+    docid = ''
+    if (document is not None) and ("id" in document):
+        docid = document["id"]
+    return docid
+
+
 # Get an array of paragraphs (str)
 def get_paragraphs(document):
     paragraphs = []
@@ -29,7 +37,6 @@ def get_paragraphs(document):
                     parser.feed(str(content["content"]))
                     paragraph = parser.get_text()
                     paragraphs.append(paragraph)
-    # print(paragraphs)
     return paragraphs
 
 
@@ -69,11 +76,12 @@ def process(part):
         task = _task
 
     for doc in part:
+        docid = get_docid(json.loads(doc))
         if args.library != "stanfordnlp":
             result, tokens = task.run(get_paragraphs(json.loads(doc)))
         else:
             result, tokens = task.value.run(get_paragraphs(json.loads(doc)))
-        results.append(result)
+        results.append((docid, result))
         total_tokens.add(tokens)
 
     return iter(results)

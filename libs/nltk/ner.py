@@ -25,10 +25,19 @@ class NLTKNamedEntityRecognition(Task):
                 for chunk in chunks:
                     if hasattr(chunk, 'label'):
                         ner_tag = chunk.label()
-                        for c in chunk:
-                            sent.append((c[0] ,ner_tag))
+                        length = len(chunk)
+                        for i in range(length):
+                            if length == 1:
+                                sent.append((chunk[i][0], 'U-' + ner_tag))
+                            elif i == 0:
+                                sent.append((chunk[i][0], 'B-' + ner_tag))
+                            elif i == length - 1:
+                                sent.append((chunk[i][0], 'L-' + ner_tag))
+                            else:
+                                sent.append((chunk[i][0], 'I-' + ner_tag))
+                            # sent.append((c[0] ,ner_tag))
                     else:
-                        sent.append((chunk[0], '0'))
+                        sent.append((chunk[0], 'O'))
                 sentences.append(sent)
                 words += len(tokens)
             paragraphs.append(sentences)

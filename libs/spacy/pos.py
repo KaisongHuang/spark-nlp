@@ -27,7 +27,7 @@ class SpacyPartOfSpeechTagger(Task):
                 sent = []
                 tokens = self.nlp(str(sentence))
                 for token in tokens:
-                    if token.text_ == ' ':
+                    if token.text == ' ':
                         continue
                     sent.append((token.text, token.tag_))
                 par.append(sent)

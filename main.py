@@ -1,9 +1,10 @@
 import argparse
 import json
 import time
+import os
+import shutil
 
 from pyspark import SparkContext
-
 from libs.allen.ner import AllenNLPNamedEntityRecognition
 from libs.allen.pos import AllenNLPPartOfSpeechTagger
 from libs.allen.dep import AllenNLPDependencyParsing
@@ -14,7 +15,6 @@ from libs.nltk.pos import NLTKPartOfSpeechTagger
 from libs.spacy.dep import SpacyDependencyParser
 from libs.spacy.ner import SpacyNamedEntityRecognition
 from libs.spacy.pos import SpacyPartOfSpeechTagger
-
 from htmltextparser import HTMLTextParser
 
 
@@ -84,7 +84,7 @@ def process(part):
         results.append((docid, result))
         total_tokens.add(tokens)
 
-    return iter(results)
+    return results
 
 
 if __name__ == "__main__":
@@ -94,9 +94,14 @@ if __name__ == "__main__":
     parser.add_argument("--gpu", default=-1, type=int, help="the GPU number to use (spacy or allennlp)")
     parser.add_argument("--task", default="ner", type=str, help="ner vs. pos vs. seg")
     parser.add_argument("--sample", default=-1, type=float, help="the % of sample to take")
+    parser.add_argument("--output", required=True, type=str, help="the path to the output files")
 
     # Parse the args
     args = parser.parse_args()
+
+    # Delete output directory if exists
+    if os.path.isdir(args.output):
+        shutil.rmtree(args.output)
 
     # Create the SparkContext
     sc = SparkContext(appName="Spark NLP - {}:{}".format(args.library, args.task))
@@ -118,7 +123,9 @@ if __name__ == "__main__":
         _task = sc.broadcast(task)
 
     if args.sample > 0:
-        rdd.sample(False, args.sample).mapPartitions(process).foreach(lambda x: print(x))
+        # result_list = rdd.sample(False, args.sample).mapPartitions(process).collect()# foreach(lambda x: print(x))
+        # sc.parallelize(result_list).saveAsTextFile(args.output)
+        rdd.sample(False, args.sample).mapPartitions(process).saveAsTextFile(args.output)
     else:
         rdd.foreachPartition(process)
 

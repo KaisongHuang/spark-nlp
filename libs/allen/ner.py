@@ -1,18 +1,19 @@
 from allennlp.predictors.predictor import Predictor
 from allennlp.models.archival import load_archive
-from spacy.lang.en import English
+# from spacy.lang.en import English
 from ..task import Task
 import torch
 torch.backends.cudnn.enabled = False
-
+import nltk
 
 class AllenNLPNamedEntityRecognition(Task):
     def __init__(self, gpu):
-        self.nlp = English()
-        self.sentencizer = self.nlp.create_pipe("sentencizer")
-        self.nlp.add_pipe(self.sentencizer)
+        # self.nlp = English()
+        # self.sentencizer = self.nlp.create_pipe("sentencizer")
+        # self.nlp.add_pipe(self.sentencizer)
         archive = load_archive("https://s3-us-west-2.amazonaws.com/allennlp/models/fine-grained-ner-model-elmo-2018.12.21.tar.gz", cuda_device = int(gpu))
         self.predictor = Predictor.from_archive(archive)
+        nltk.download('averaged_perceptron_tagger')
 
 
     def run(self, data):
@@ -21,11 +22,15 @@ class AllenNLPNamedEntityRecognition(Task):
 
         for paragraph in data:
             par = []
+            # doc = self.nlp(paragraph)
             
-            doc = self.nlp(paragraph)
-            for sentence in doc.sents:
+            # for sentence in doc.sents:
+            for sentence in nltk.sent_tokenize(paragraph):
+                # sent_str = str(sentence)
+                if sentence == 0 or sentence.isspace():
+                    continue
                 sent = []
-                prediction = self.predictor.predict(str(sentence))
+                prediction = self.predictor.predict(sentence)
                 prd_words = prediction['words']
                 prd_pos = prediction['tags']
                 length = len(prd_words)

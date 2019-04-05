@@ -18,6 +18,7 @@ class NLTKNamedEntityRecognition(Task):
         for paragraph in data:
             sentences = []
             for sentence in nltk.sent_tokenize(paragraph):
+                print(sentence)
                 sent = []
                 tokens = nltk.word_tokenize(sentence)
                 tags = nltk.pos_tag(tokens)
